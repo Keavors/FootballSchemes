@@ -15,7 +15,7 @@ const { openApp, suite } = require('./harness');
     await env.press('Открыть пример «Маятник»');
     await env.wait(40);
     t.ok('открылся редактор', !!env.$('.ed') && env.App.view === 'editor');
-    t.ok('в списке 18 слайдов', env.$$('.sl-list .sl-main').length === 18, env.$$('.sl-list .sl-main').length);
+    t.ok('в списке все слайды примера', env.$$('.sl-list .sl-main').length === env.UST.pendulumProject().slides.length, env.$$('.sl-list .sl-main').length);
     t.clean(env, 'открытие примера без ошибок');
   });
 

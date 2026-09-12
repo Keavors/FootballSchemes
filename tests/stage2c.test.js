@@ -13,7 +13,7 @@ const { openApp, suite } = require('./harness');
   const A = vis[0].id, B = vis[1].id;
   e.UST.commit(() => {
     const f = e.frame();
-    e.board().entities.forEach((x, i) => { if (f.pos[x.id]) f.pos[x.id] = [4 + i * 2, 96]; });
+    e.board().entities.forEach((x, i) => { if (f.pos[x.id]) f.pos[x.id] = [84 + i, 96]; });
     f.pos[A] = [20, 40];
     f.pos[B] = [60, 70];
   });

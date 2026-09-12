@@ -28,7 +28,7 @@ const withEstimate = win => {
   const id = e.App.project.id;
   const ent = e.board().entities.find(x => e.frame().pos[x.id]);
   const p0 = e.frame().pos[ent.id].slice();
-  await e.drag(`[data-eid="${ent.id}"] circle`, p0, [p0[0] + 9, p0[1]]);
+  await e.drag(`[data-eid="${ent.id}"] circle`, p0, [p0[0] + 9, p0[1]], { altKey: true });
   await e.wait(1400);
   t.ok('после правки записалось', e.App.saving === 'saved', e.App.saving);
   const raw = await e.UST.Store.get('ustanovka-p-' + id);

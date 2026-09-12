@@ -41,10 +41,14 @@ const { openApp, suite } = require('./harness');
   e.click(e.$$('.sl-list .sl-main')[other]);
   await e.wait(20);
   const ents0 = b().entities.length, frames0 = b().frames.length;
+  /* своих игроков узнаём по id или по подписи, соперников с первой схемы здесь нет — они добавятся */
+  const known = x => b().entities.some(y => y.id === x.id || (y.kind === x.kind && !!y.gk === !!x.gk && (y.label || y.number) && (y.label || y.number) === (x.label || x.number)));
+  const clipEnts = e.UST.getClip().entities;
+  const fresh = clipEnts.filter(x => !known(x)).length;
   e.key('v', { ctrlKey: true, code: 'KeyV' });
   await e.wait(25);
   t.ok('шаг вставился на другую схему', b().frames.length === frames0 + 1);
-  t.ok('знакомые игроки не задвоились', b().entities.length === ents0, ents0 + ' → ' + b().entities.length);
+  t.ok('знакомые игроки не задвоились', fresh < clipEnts.length && b().entities.length === ents0 + fresh, ents0 + ' + ' + fresh + ' новых → ' + b().entities.length);
   t.ok('расстановка перенеслась', Object.keys(f().pos).filter(id => f().pos[id]).length === srcCount);
   e.key('z', { ctrlKey: true });
   await e.wait(15);
