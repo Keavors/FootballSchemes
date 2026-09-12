@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Маятник</title>
+<meta name="generator" content="Установка">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Oswald:wght@500;600;700&family=PT+Sans:ital,wght@0,400;0,700;1,400&family=Rubik:wght@400;500;700&family=Russo+One&display=swap" rel="stylesheet">
+<style>html,body{margin:0;height:100%;background:#edf1ee}#te-root{height:100vh;height:100dvh}
+
+.te-app{--te-bg:#edf1ee;--te-deep:#dde4e0;--te-ink:#1f2a44;--te-ink2:#56617a;--te-rule:#c9d2cd;--te-accent:#ff7a00;--te-accent-text:#c75300;
+  --te-head:'Oswald','Arial Narrow','Roboto Condensed','DejaVu Sans Condensed',sans-serif;--te-body:'PT Sans','Segoe UI',Roboto,Arial,sans-serif;--te-hand:'Caveat','Oswald','Arial Narrow',sans-serif;
+  position:relative;height:100%;display:flex;flex-direction:column;background:var(--te-bg);color:var(--te-ink);font:400 16px/1.5 var(--te-body);-webkit-font-smoothing:antialiased;overflow:hidden}
+.te-theme-night{--te-bg:#111a16;--te-deep:#1b2621;--te-ink:#e9f0ea;--te-ink2:#9db0a5;--te-rule:#2d3b34}
+.te-theme-paper{--te-bg:#ffffff;--te-deep:#eef1f0;--te-ink:#15181e;--te-ink2:#5b6370;--te-rule:#dde2e5}
+.te-font-bold{--te-head:'Russo One','Arial Black',sans-serif;--te-body:'Rubik','Segoe UI',Roboto,Arial,sans-serif}
+.te-font-clean{--te-head:'Rubik','Segoe UI',Roboto,Arial,sans-serif;--te-body:'Rubik','Segoe UI',Roboto,Arial,sans-serif}
+.te-app *{box-sizing:border-box}
+.te-app button{font:inherit;color:inherit}
+.te-app button:focus-visible{outline:3px solid var(--te-accent);outline-offset:2px}
+.te-top{display:flex;align-items:center;gap:10px;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top));border-bottom:1px solid var(--te-rule)}
+.te-logo{display:flex;align-items:center;gap:9px;font:600 18px/1.1 var(--te-head);min-width:0}
+.te-logo i{flex:0 0 auto;width:11px;height:11px;border-radius:50%;background:var(--te-accent)}
+.te-logo span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.te-grow{flex:1}
+.te-pager{font:500 15px/1 var(--te-head);color:var(--te-ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.te-btn{appearance:none;height:38px;min-width:38px;padding:0 12px;border-radius:10px;border:1.5px solid var(--te-rule);background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;font:500 15px/1 var(--te-head);cursor:pointer}
+.te-btn:hover{border-color:var(--te-ink2)}
+.te-btn svg{width:18px;height:18px}
+.te-stage{flex:1;position:relative;overflow:hidden}
+.te-empty{padding:40px 20px;text-align:center;color:var(--te-ink2)}
+.te-slide{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 36px;visibility:hidden;opacity:0;transition:opacity .3s ease,visibility 0s linear .3s}
+.te-slide.on{visibility:visible;opacity:1;transition:opacity .3s ease}
+.te-inner{max-width:1320px;margin:0 auto}
+.te-text .te-inner{max-width:1120px}
+.te-title-slide.te-text .te-inner{min-height:100%;display:flex;flex-direction:column;justify-content:center}
+.te-split{display:flex;flex-direction:column;gap:14px}
+.te-vis{display:flex;flex-direction:column;align-items:center;gap:8px}
+.te-sui{width:100%;max-width:540px;margin:0 auto}
+.te-head{max-width:66ch}
+.te-body{max-width:68ch}
+.te-text .te-body{max-width:none}
+.te-keys{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 14px;font:400 13.5px/1.35 var(--te-body);color:var(--te-ink2)}
+.te-keys span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.te-keys i{width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #aab4ae}
+.te-board{padding:8px;border-radius:14px;background:var(--te-deep);box-shadow:inset 0 0 0 1px var(--te-rule)}
+.te-pitch{width:min(calc(100vw - 52px),calc(54vh * var(--ar)),calc(520px * var(--ar) * 1.5));width:min(calc(100vw - 52px),calc(54dvh * var(--ar)),calc(520px * var(--ar) * 1.5));aspect-ratio:var(--ar)}
+.te-pitch svg{display:block;width:100%;height:100%}
+.te-sui-in{display:grid;gap:10px}
+.te-chapters{display:flex;flex-wrap:wrap;gap:6px}
+.te-chapter{appearance:none;border:1.5px solid var(--te-rule);background:transparent;font:500 15px/1 var(--te-head);padding:9px 14px;border-radius:999px;cursor:pointer}
+.te-chapter:hover{border-color:var(--te-ink2)}
+.te-chapter[aria-pressed="true"]{background:var(--te-ink);border-color:var(--te-ink);color:var(--te-bg)}
+.te-note-box{display:flex;gap:12px;align-items:baseline;min-height:3.4em;padding:8px 4px 8px 14px;border-left:3px solid var(--te-accent)}
+.te-step{font:600 15px/1 var(--te-head);color:var(--te-ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.te-cap{font:400 17px/1.4 var(--te-body)}
+.te-ctrl{display:flex;align-items:center;gap:8px}
+.te-ctrl button{appearance:none;width:46px;height:46px;border-radius:12px;border:1.5px solid var(--te-rule);background:transparent;display:grid;place-items:center;cursor:pointer}
+.te-ctrl button:hover{border-color:var(--te-ink2)}
+.te-ctrl button.te-play{width:68px;background:var(--te-ink);border-color:var(--te-ink);color:var(--te-bg)}
+.te-ctrl svg{width:20px;height:20px}
+.te-ticks{display:flex;flex-wrap:wrap;gap:4px;margin-left:10px}
+.te-ticks i{width:16px;height:4px;border-radius:2px;background:var(--te-rule)}
+.te-ticks i.done{background:var(--te-ink)}
+.te-app h1{font:700 clamp(52px,9vw,112px)/.92 var(--te-head);letter-spacing:-.01em;margin:4px 0 10px}
+.te-app h2{font:600 clamp(28px,3.3vw,44px)/1.08 var(--te-head);margin:2px 0 10px}
+.te-app h3{font:600 21px/1.2 var(--te-head);margin:22px 0 8px}
+.te-app p{margin:0 0 12px}
+.te-sub{font:500 clamp(21px,2.3vw,28px)/1.25 var(--te-head);margin:0 0 6px}
+.te-lead{font-size:18.5px;line-height:1.45;margin:0 0 4px}
+.te-md>:first-child,.te-md .te-cols>div>:first-child{margin-top:0}
+.te-md p{font-size:17px}
+.te-shout{font-family:var(--te-hand);font-weight:700;font-size:1.32em;line-height:1;color:var(--te-accent-text);white-space:nowrap}
+.te-list{list-style:none;margin:0 0 14px;padding:0;border-top:1px solid var(--te-rule)}
+.te-list li{padding:11px 0;border-bottom:1px solid var(--te-rule);font-size:17px;line-height:1.45}
+.te-steps{list-style:none;margin:0 0 14px;padding:0;counter-reset:s;border-top:1px solid var(--te-rule)}
+.te-steps>li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:8px;padding:11px 0;border-bottom:1px solid var(--te-rule);font-size:17px;line-height:1.45}
+.te-steps>li::before{content:counter(s);font:600 23px/1.05 var(--te-head);color:var(--te-ink2)}
+.te-dl{margin:0 0 14px;border-top:1px solid var(--te-rule)}
+.te-dl>div{display:grid;grid-template-columns:minmax(130px,34%) 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--te-rule);align-items:baseline}
+.te-dl dt{font:600 20px/1.2 var(--te-head)}
+.te-dl dd{margin:0;font-size:17px;line-height:1.45}
+.te-callout{margin:14px 0;padding:2px 0 2px 14px;border-left:3px solid var(--te-accent)}
+.te-cols{display:grid;gap:4px 44px}
+.te-nav{display:flex;align-items:center;gap:12px;padding:10px 16px;padding-bottom:max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--te-rule)}
+.te-navbtn{appearance:none;height:46px;min-width:46px;border-radius:12px;border:1.5px solid var(--te-rule);background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;font:500 17px/1 var(--te-head);cursor:pointer}
+.te-navbtn.te-primary{background:var(--te-ink);border-color:var(--te-ink);color:var(--te-bg);padding:0 14px 0 18px}
+.te-navbtn:disabled{opacity:.35;cursor:default}
+.te-navbtn svg{width:20px;height:20px}
+.te-prog{flex:1;min-width:0;display:grid;gap:6px}
+.te-track{height:4px;border-radius:2px;background:var(--te-rule);overflow:hidden}
+.te-track i{display:block;height:100%;width:0;background:var(--te-accent);transition:width .35s ease}
+.te-where{font:500 15px/1.1 var(--te-head);color:var(--te-ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.te-toc{position:absolute;inset:0;z-index:30;background:rgba(20,30,44,.32);display:flex;justify-content:flex-end}
+.te-toc[hidden]{display:none}
+.te-toc-panel{width:min(420px,100%);height:100%;background:var(--te-bg);display:flex;flex-direction:column;box-shadow:-10px 0 30px rgba(20,30,44,.18)}
+.te-toc-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--te-rule);font:600 22px/1 var(--te-head)}
+.te-toc ol{list-style:none;margin:0;padding:6px 0;overflow-y:auto}
+.te-toc li button{appearance:none;border:0;background:transparent;width:100%;text-align:left;display:grid;grid-template-columns:36px 1fr;padding:11px 16px;cursor:pointer;font:400 17px/1.3 var(--te-body)}
+.te-toc li button span:first-child{font:600 16px/1.3 var(--te-head);color:var(--te-ink2)}
+.te-toc li button:hover{background:var(--te-deep)}
+.te-toc li button[aria-current="true"]{background:var(--te-deep)}
+/* svg */
+.te-tok{transition:opacity .35s}
+.te-tb{stroke:#fff;stroke-width:2.5;transition:fill .35s}
+.te-lbl{font-family:var(--te-head);font-weight:600;letter-spacing:.02em;pointer-events:none;transition:fill .35s}
+.te-shadow{fill:rgba(6,30,14,.32)}
+.te-halo{fill:none;stroke:none}
+.te-tok.hl .te-halo,.te-tok.focus .te-halo{animation:te-pulse 1.8s ease-out infinite}
+.te-tok.dim{opacity:.42}
+.te-tok.gone,.te-ball.gone{opacity:0;pointer-events:none}
+.te-ball{transition:opacity .25s}
+@keyframes te-pulse{0%{stroke-width:2;stroke-opacity:.95}100%{stroke-width:22;stroke-opacity:0}}
+.te-arrow,.te-zone{animation:te-fade .35s ease both}
+.te-dash{animation:te-march .8s linear infinite}
+@keyframes te-march{to{stroke-dashoffset:-15}}
+@keyframes te-fade{from{opacity:0}to{opacity:1}}
+.te-note{font-family:var(--te-hand);font-weight:700;paint-order:stroke;stroke:rgba(10,45,22,.8);stroke-width:4.5px;stroke-linejoin:round}
+.te-note-head{font-family:var(--te-head);font-weight:600}
+.te-note-body{font-family:var(--te-body);font-weight:700}
+.te-note-plain{stroke:none}
+.te-digit{font:600 20px var(--te-head);fill:#fff;paint-order:stroke;stroke:rgba(10,45,22,.75);stroke-width:4px;stroke-linejoin:round}
+.te-bub{animation:te-pop .4s cubic-bezier(.3,1.5,.5,1) both;transform-box:fill-box;transform-origin:50% 100%}
+.te-bubtxt{font-family:var(--te-hand);font-weight:700;font-size:22px}
+@keyframes te-pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.te-static .te-arrow,.te-static .te-zone,.te-static .te-bub,.te-static .te-dash{animation:none}
+.te-static .te-tok,.te-static .te-tb{transition:none}
+@media (min-width:760px){.te-cols{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.te-dl>div{grid-template-columns:1fr;gap:2px}.te-navbtn.te-primary span{display:none}.te-navbtn.te-primary{padding:0 12px}}
+@media (min-width:900px) and (min-aspect-ratio:5/4){
+  .te-slide{padding:22px 36px}
+  .te-slide.te-has-board{overflow:hidden}
+  .te-split{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"vis head" "vis sui" "vis body";column-gap:52px;row-gap:16px;height:100%}
+  .te-split.te-right{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"head vis" "sui vis" "body vis"}
+  .te-split.te-focus .te-head,.te-split.te-focus .te-sui,.te-split.te-focus .te-body{max-width:440px}
+  .te-vis{grid-area:vis;align-self:start}
+  .te-head{grid-area:head}
+  .te-sui{grid-area:sui;margin:0;max-width:600px}
+  .te-body{grid-area:body;overflow-y:auto;padding:0 12px 24px 0}
+  .te-pitch{width:min(calc((100vh - 232px) * var(--ar)),var(--te-maxw,640px));width:min(calc((100dvh - 232px) * var(--ar)),var(--te-maxw,640px))}
+  .te-text .te-md li,.te-text .te-md p,.te-text .te-dl dd{font-size:19px}
+  .te-text .te-lead{font-size:20px}
+}
+@media (prefers-reduced-motion:reduce){
+  .te-tok.hl .te-halo,.te-tok.focus .te-halo,.te-dash,.te-bub{animation:none}
+  .te-slide,.te-slide.on{transition:none}
+}
+</style>
+</head>
+<body>
+<div id="te-root"></div>
+<script type="application/json" id="te-data">{"title":"Маятник","settings":{"format":"8x8","pitch":{"orientation":"vertical","view":"full","ratio":0,"stripes":true,"markings":true,"grass":"#3a8a55","grass2":"#40925b","surround":"#2f7a4a","lines":"#ffffff"},"colors":{"ours":"#2456c7","oursText":"#ffffff","oursKeeper":"#f1c232","oursKeeperText":"#1f2a44","opp":"#d8453c","oppText":"#ffffff","oppKeeper":"#9e2f28","oppKeeperText":"#ffffff","third":"#7b8699","thirdText":"#ffffff","thirdKeeper":"#4f596b","thirdKeeperText":"#ffffff","special":"#ff7a00","specialText":"#1f2a44","run":"#ffffff","pass":"#ffe066","oppArrow":"#ff5a4e","ball":"#ffffff"},"tokens":{"oursSize":1,"oppSize":0.8,"thirdSize":0.9,"oursLabel":"label","oppLabel":"none","thirdLabel":"label","oursShape":"circle","oppShape":"circle","thirdShape":"circle"},"legend":{"show":true,"ours":"мы","special":"маятник","opp":"соперник","third":"нейтральные","pass":"пас","run":"бег","dir":"auto"},"look":{"theme":"board","font":"sport","accent":"#ff7a00"},"anim":{"speed":1,"autoplay":true}},"slides":[{"id":"xzx43zg8","layout":"title","nav":"Маятник: идея","title":"Маятник","subtitle":"Отдаём мяч — забираем пространство","body":"Играем от обороны. Сопернику спокойно отдаём мяч на его половине, стоим компактно и ждём ошибки. Отобрали — трое убегают в быструю контратаку, пока соперник раскрыт.\n\n- **Без мяча — компактный 4-2-1.** Большую часть матча мяч у соперника, и это наш план.\n- **Отбор — сигнал к рывку.** Вперёд уходят трое: маятник, нападающий и ближний полузащитник.\n- **Контратака — до 10 секунд.** Два-три паса и удар. Не вышло — сохраняем мяч.\n- **Сзади всегда трое и опорный.** Даже когда мы бежим вперёд.","side":"left","board":{"entities":[{"id":"GK","kind":"ours","label":"ВР","number":"1","gk":true},{"id":"LL","kind":"ours","label":"ЛЛ","number":"3","gk":false},{"id":"LC","kind":"ours","label":"ЛЦ","number":"5","gk":false},{"id":"RC","kind":"ours","label":"ПЦ","number":"4","gk":false},{"id":"RL","kind":"ours","label":"ПЛ","number":"2","gk":false},{"id":"LM","kind":"ours","label":"ЛП","number":"8","gk":false},{"id":"RM","kind":"ours","label":"ПП","number":"6","gk":false},{"id":"ST","kind":"ours","label":"Н","number":"9","gk":false}],"frames":[{"id":"mdsluouh","pos":{"GK":[50,94],"LL":[15,75],"LC":[38,78],"RC":[62,78],"RL":[85,75],"LM":[37,63],"RM":[63,63],"ST":[50,49]},"ball":null,"hl":[],"dim":[],"focus":[],"arrows":[],"zones":[{"id":"w7qpj3dg","type":"link","ids":["LL","LC","RC","RL"],"color":"#ffffff","label":"4","lpos":"margin"},{"id":"holdt5kz","type":"link","ids":["LM","RM"],"color":"#ffffff","label":"2","lpos":"margin"},{"id":"47fd1rc4","type":"link","ids":["ST"],"color":"#ffffff","label":"1","lpos":"margin"}],"bubbles":[],"cap":"Без мяча — компактный **4-2-1** на своей половине.","chapter":"","dur":1100,"hold":2400},{"id":"psk9nuj7","pos":{"GK":[50,92],"LL":[26,70],"LC":[44,72],"RC":[64,70],"RL":[86,26],"LM":[46,58],"RM":[60,34],"ST":[42,16]},"ball":{"owner":"RL"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"83poyaj9","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"83gy6bgc","kind":"move","target":"RM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"7lnrnq83","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[{"id":"s52gdwsp","type":"link","ids":["LL","LC","RC"],"color":"#ffffff","label":"3","lpos":"margin"},{"id":"q1pnxqlc","type":"ring","target":"LM","r":24,"color":"#ffffff","label":"опорный","lpos":"above"},{"id":"ahvm023n","type":"hull","ids":["RM","RL","ST"],"color":"#ff8a1a","label":"бегут трое"}],"bubbles":[{"id":"89zeq7vs","target":"RL","text":"Пошли!","color":"#ff8a1a","below":false}],"cap":"Отбор справа — трое убегают на ускорении, **четверо страхуют**.","chapter":"","dur":1100,"hold":2800},{"id":"gm2q6moq","pos":{"GK":[50,94],"LL":[15,75],"LC":[38,78],"RC":[62,78],"RL":[85,75],"LM":[37,63],"RM":[63,63],"ST":[50,49]},"ball":null,"hl":[],"dim":[],"focus":[],"arrows":[{"id":"fcy98nmk","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"special","width":2.8}],"zones":[{"id":"wlxjm8h3","type":"link","ids":["LL","LC","RC","RL"],"color":"#ffffff","label":"4","lpos":"margin"},{"id":"gj83987t","type":"link","ids":["LM","RM"],"color":"#ffffff","label":"2","lpos":"margin"},{"id":"vlhk6rgz","type":"link","ids":["ST"],"color":"#ffffff","label":"1","lpos":"margin"}],"bubbles":[{"id":"cnxceh83","target":"LC","text":"Домой!","color":"#ffffff","below":false}],"cap":"Атака закончилась — все бегом назад, снова **4-2-1**.","chapter":"","dur":1100,"hold":2400},{"id":"trvkbdym","pos":{"GK":[50,92],"LL":[14,26],"LC":[36,70],"RC":[56,72],"RL":[74,70],"LM":[40,34],"RM":[54,58],"ST":[58,16]},"ball":{"owner":"LL"},"hl":["LL"],"dim":[],"focus":[],"arrows":[{"id":"jbxke5rm","kind":"move","target":"LL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"5gqexvvc","kind":"move","target":"LM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"sxgu7wmn","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[{"id":"qv14ei37","type":"link","ids":["LC","RC","RL"],"color":"#ffffff","label":"3","lpos":"margin"},{"id":"a97tjgzl","type":"ring","target":"RM","r":24,"color":"#ffffff","label":"опорный","lpos":"above"},{"id":"849wl64t","type":"hull","ids":["LM","LL","ST"],"color":"#ff8a1a","label":"бегут трое"}],"bubbles":[{"id":"gc9ui0ga","target":"LL","text":"Пошли!","color":"#ff8a1a","below":false}],"cap":"Отбор слева — бегут левые. Правило одно: решает фланг.","chapter":"","dur":1100,"hold":2800}],"autoplay":true,"loop":true,"still":false,"legend":true}},{"id":"ge4v6k7d","layout":"text","nav":"Как мы играем","title":"Как мы играем","subtitle":"Четыре фазы. Большую часть матча мяч у соперника — это не беда, а наш план.","body":"1. **Оборона.** Компактный блок 4-2-1 на своей половине. Сопернику отдаём мяч у его ворот, но не пускаем в центр и за спину.\n2. **Отбор по сигналу.** Пас на фланг, приём спиной, плохой приём — зажимаем вдвоём-втроём.\n3. **Контратака до 10 секунд.** Первый пас вперёд, трое бегут на ускорении, четверо страхуют.\n4. **Возврат.** Не забили — сохраняем мяч или бегом домой. Через 5–6 секунд после потери мы снова в блоке.\n\n> Наша сила — не владение, а скорость. Соперник, который держит мяч, сам поднимает защитников и оставляет за спиной пустое поле.","side":"left","board":null},{"id":"mjbn51rw","layout":"split","nav":"Кто есть кто","title":"Кто есть кто","subtitle":"Базовая расстановка — 4-2-1. Буквы на фишках одинаковые на всех схемах.","body":"- **ВР — вратарь.** Командует блоком и начинает контратаку быстрым вводом мяча.\n- **ЛЛ и ПЛ — латерали-маятники.** В обороне крайние защитники. После отбора на своём фланге латераль рвёт вперёд, второй остаётся третьим защитником.\n- **ЛЦ и ПЦ — центральные защитники.** Держат линию у штрафной и никогда не уходят вперёд.\n- **ЛП и ПП — центральные полузащитники.** Без мяча закрывают центр. После отбора ближний к мячу бежит в атаку, дальний становится опорным.\n- **Н — нападающий.** Без мяча перекрывает пас в центр, после отбора убегает за спину защитникам.\n\n4 + 2 + 1 = 7 полевых и вратарь.","side":"left","board":{"entities":[{"id":"GK","kind":"ours","label":"ВР","number":"1","gk":true},{"id":"LL","kind":"ours","label":"ЛЛ","number":"3","gk":false},{"id":"LC","kind":"ours","label":"ЛЦ","number":"5","gk":false},{"id":"RC","kind":"ours","label":"ПЦ","number":"4","gk":false},{"id":"RL","kind":"ours","label":"ПЛ","number":"2","gk":false},{"id":"LM","kind":"ours","label":"ЛП","number":"8","gk":false},{"id":"RM","kind":"ours","label":"ПП","number":"6","gk":false},{"id":"ST","kind":"ours","label":"Н","number":"9","gk":false}],"frames":[{"id":"e1mmnnnm","pos":{"GK":[50,94],"LL":[15,75],"LC":[38,78],"RC":[62,78],"RL":[85,75],"LM":[37,63],"RM":[63,63],"ST":[50,49]},"ball":null,"hl":[],"dim":[],"focus":[],"arrows":[],"zones":[{"id":"yoi3ljzo","type":"link","ids":["LL","LC","RC","RL"],"color":"#ffffff","label":"4","lpos":"margin"},{"id":"31r32wsd","type":"link","ids":["LM","RM"],"color":"#ffffff","label":"2","lpos":"margin"},{"id":"n9ufra33","type":"link","ids":["ST"],"color":"#ffffff","label":"1","lpos":"margin"}],"bubbles":[],"cap":"","chapter":"","dur":1100,"hold":2000}],"autoplay":false,"loop":false,"still":true,"legend":true}},{"id":"ksnx7lfo","layout":"text","nav":"Требования: тыл","title":"Требования к игрокам: вратарь и защитники","subtitle":"Их работа — чтобы у соперника с мячом не было ни одного свободного выхода к воротам.","body":"## Вратарь\n- **Быстрый ввод мяча.** Поймал — сразу ищет маятника или нападающего: рукой на фланг или ногой за спину защитникам соперника.\n- **Голос блока.** Видит всё поле и командует: «Сдвиг!», «Мой!», «Домой!».\n- **Играет на выходах.** Забирает пробросы за спину защитников и навесы в штрафную.\n||\n## Центральные защитники\n- **Единоборства и второй этаж.** Соперник будет навешивать и бить издалека — эти мячи наши.\n- **Терпение.** Не выпрыгивают из линии за мячом, держат зону у линии штрафной.\n- **Первый пас вперёд.** Отобрал — в одно-два касания на маятника или нападающего, без обводки.\n- **Не уходят вперёд.** Даже когда очень хочется.","side":"left","board":null},{"id":"gfis8ddd","layout":"text","nav":"Требования: бегуны","title":"Требования к игрокам: латерали, полузащита, нападение","subtitle":"Им нужно и защищаться, и за секунды переключаться в атаку. Главное качество — ускорение.","body":"## Латерали — маятники\n- **Ускорение и выносливость.** Главные бегуны команды: рывок на 30–40 метров вперёд и такой же назад.\n- **Оборона один в один.** Прижать соперника к бровке и не дать прострелить.\n- **Передача на ходу.** Контратака чаще всего заканчивается прострелом с фланга.\n- **Дисциплина.** Идёт только латераль фланга отбора, второй остаётся.\n## Нападающий\n- **Скорость и рывок за спину.** Когда соперник владеет мячом, за его защитниками много места.\n- **Держит мяч спиной к воротам**, чтобы дождаться маятника и полузащитника.\n- **Первый защитник.** Перекрывает пас в центр и направляет атаку соперника на фланг.\n- **Хладнокровие.** Моментов будет немного — каждый нужно использовать.\n||\n## Центральные полузащитники\nКто из двоих бежит в атаку, решает место отбора, поэтому оба должны уметь и то, и другое.\n- **Работа без мяча.** Закрывают центр, не дают сопернику развернуться между линиями.\n- **Тот, кто уходит.** Первым получает мяч после отбора, отдаёт вперёд в одно касание и бежит третьим в атаку.\n- **Тот, кто остаётся — опорный.** Перехваты и подстраховка. Он четвёртый страхующий и первым встречает контратаку соперника.","side":"left","board":null},{"id":"vynvsyjx","layout":"split","nav":"Оборона: блок","title":"Без мяча: отдаём мяч, не отдаём пространство","subtitle":"Соперник может катать мяч сколько угодно. Опасны только пас в центр и пас за спину.","body":"- **Семь полевых — одно целое.** От нападающего до защитников 15–20 метров, между линиями — не больше 10.\n- **Защитники — у линии штрафной**, а не внутри: иначе соперник бьёт издалека.\n- **Нападающий — первый защитник.** Не бежит к их защитникам, а встаёт между мячом и центром.\n- **Весь блок двигается вместе.** Мяч ушёл в сторону — сдвинулись все семь, дальний латераль подтянулся к центру.\n- **Никто не выходит без сигнала.** Одиночный прессинг только открывает дыру за спиной.","side":"left","board":{"entities":[{"id":"GK","kind":"ours","label":"ВР","number":"1","gk":true},{"id":"LL","kind":"ours","label":"ЛЛ","number":"3","gk":false},{"id":"LC","kind":"ours","label":"ЛЦ","number":"5","gk":false},{"id":"RC","kind":"ours","label":"ПЦ","number":"4","gk":false},{"id":"RL","kind":"ours","label":"ПЛ","number":"2","gk":false},{"id":"LM","kind":"ours","label":"ЛП","number":"8","gk":false},{"id":"RM","kind":"ours","label":"ПП","number":"6","gk":false},{"id":"ST","kind":"ours","label":"Н","number":"9","gk":false},{"id":"og","kind":"opp","label":"","number":"1","gk":true},{"id":"o1","kind":"opp","label":"","number":"1","gk":false},{"id":"o2","kind":"opp","label":"","number":"2","gk":false},{"id":"o3","kind":"opp","label":"","number":"3","gk":false},{"id":"o4","kind":"opp","label":"","number":"4","gk":false},{"id":"o5","kind":"opp","label":"","number":"5","gk":false},{"id":"o6","kind":"opp","label":"","number":"6","gk":false},{"id":"o7","kind":"opp","label":"","number":"7","gk":false}],"frames":[{"id":"dii6ztz8","pos":{"GK":[50,94],"LL":[15,75],"LC":[38,78],"RC":[62,78],"RL":[85,75],"LM":[37,63],"RM":[63,63],"ST":[50,49],"og":[50,5],"o1":[25,24],"o2":[50,20],"o3":[75,24],"o4":[14,36],"o5":[50,36],"o6":[86,36],"o7":[50,56]},"ball":{"owner":"o2"},"hl":[],"dim":[],"focus":[],"arrows":[],"zones":[{"id":"ahrhk6a2","type":"rect","x":4,"y":2,"w":92,"h":32,"color":"#ffffff","label":"пусть владеют","lpos":"bottom"},{"id":"dwzcuwn7","type":"hull","ids":["LL","LC","RC","RL","LM","RM","ST"],"color":"#ffffff","label":"компактный блок"}],"bubbles":[],"cap":"Соперник катает мяч у себя. Мы не бежим к нему, а стоим компактно.","chapter":"","dur":1100,"hold":2600},{"id":"dwuv91o4","pos":{"GK":[50,94],"LL":[14,74],"LC":[34,78],"RC":[56,79],"RL":[76,77],"LM":[31,62],"RM":[55,63],"ST":[42,48],"og":[50,5],"o1":[25,24],"o2":[50,20],"o3":[75,24],"o4":[14,36],"o5":[50,36],"o6":[86,36],"o7":[50,56]},"ball":{"owner":"o1"},"hl":[],"dim":[],"focus":[],"arrows":[{"id":"ttnaqy2t","kind":"line","from":{"e":"o2"},"to":{"e":"o1"},"head":true,"bend":0,"style":"solid","color":"opp","width":3}],"zones":[{"id":"471kimkw","type":"hull","ids":["LL","LC","RC","RL","LM","RM","ST"],"color":"#ffffff","label":""}],"bubbles":[],"cap":"Мяч влево — сдвинулся весь блок. Нападающий встал между мячом и центром.","chapter":"","dur":1100,"hold":2400},{"id":"teuz4g4g","pos":{"GK":[50,94],"LL":[24,77],"LC":[44,79],"RC":[66,78],"RL":[86,74],"LM":[45,63],"RM":[69,62],"ST":[58,48],"og":[50,5],"o1":[25,24],"o2":[50,20],"o3":[75,24],"o4":[14,36],"o5":[50,36],"o6":[86,36],"o7":[50,56]},"ball":{"owner":"o3"},"hl":[],"dim":[],"focus":[],"arrows":[{"id":"r8tatysd","kind":"line","from":{"e":"o1"},"to":{"e":"o3"},"head":true,"bend":-18,"style":"solid","color":"opp","width":3}],"zones":[{"id":"ulutb601","type":"hull","ids":["LL","LC","RC","RL","LM","RM","ST"],"color":"#ffffff","label":""}],"bubbles":[],"cap":"Перевод на другой фланг — сдвиг вправо. Дальний латераль подтягивается к центру.","chapter":"","dur":1100,"hold":2400}],"autoplay":true,"loop":false,"still":false,"legend":true}},{"id":"8mu9t1ze","layout":"split","nav":"Ловушка","title":"Ловушка: где мы отбираем мяч","subtitle":"Выходим на мяч только по сигналу — и сразу вдвоём-втроём.","body":"- **Пас на фланг.** Бровка — лишний защитник. Латераль выходит, полузащитник закрывает пас внутрь, нападающий — пас назад.\n- **Приём спиной к нашим воротам.** Защитник выходит сзади и не даёт развернуться, полузащитники зажимают с боков.\n- **Плохой приём или отскок.** Ближайший атакует сразу, без команды.\n- **Навес или длинный пас.** Пока мяч в воздухе, успеваем сблизиться.\n\n> Отобрали — первый пас только вперёд. Ради этого мы и отдавали мяч.","side":"left","board":{"entities":[{"id":"GK","kind":"ours","label":"ВР","number":"1","gk":true},{"id":"LL","kind":"ours","label":"ЛЛ","number":"3","gk":false},{"id":"LC","kind":"ours","label":"ЛЦ","number":"5","gk":false},{"id":"RC","kind":"ours","label":"ПЦ","number":"4","gk":false},{"id":"RL","kind":"ours","label":"ПЛ","number":"2","gk":false},{"id":"LM","kind":"ours","label":"ЛП","number":"8","gk":false},{"id":"RM","kind":"ours","label":"ПП","number":"6","gk":false},{"id":"ST","kind":"ours","label":"Н","number":"9","gk":false},{"id":"og","kind":"opp","label":"","number":"1","gk":true},{"id":"o1","kind":"opp","label":"","number":"1","gk":false},{"id":"o2","kind":"opp","label":"","number":"2","gk":false},{"id":"o3","kind":"opp","label":"","number":"3","gk":false},{"id":"o4","kind":"opp","label":"","number":"4","gk":false},{"id":"o5","kind":"opp","label":"","number":"5","gk":false},{"id":"o6","kind":"opp","label":"","number":"6","gk":false},{"id":"o7","kind":"opp","label":"","number":"7","gk":false}],"frames":[{"id":"qaze3lxh","pos":{"GK":[50,94],"LL":[16,74],"LC":[36,78],"RC":[58,79],"RL":[78,76],"LM":[32,62],"RM":[56,63],"ST":[42,48],"og":[50,5],"o1":[25,24],"o2":[50,20],"o3":[75,24],"o4":[18,40],"o5":[50,36],"o6":[82,40],"o7":[50,56]},"ball":{"owner":"o1"},"hl":[],"dim":[],"focus":[],"arrows":[],"zones":[],"bubbles":[],"cap":"Соперник у себя с мячом — ждём сигнала.","chapter":"Ловушка на фланге","dur":1100,"hold":1600},{"id":"nw616j4e","pos":{"GK":[50,94],"LL":[18,58],"LC":[30,74],"RC":[52,77],"RL":[72,75],"LM":[30,56],"RM":[54,62],"ST":[38,46],"og":[50,5],"o1":[25,24],"o2":[50,20],"o3":[75,24],"o4":[10,44],"o5":[50,36],"o6":[82,40],"o7":[50,56]},"ball":{"owner":"o4"},"hl":[],"dim":[],"focus":["LL"],"arrows":[{"id":"p7416y6b","kind":"line","from":{"e":"o1"},"to":{"e":"o4"},"head":true,"bend":0,"style":"solid","color":"opp","width":3},{"id":"1q8wzqh9","kind":"move","target":"LL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"b7nz1ddz","kind":"move","target":"LM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[{"id":"lzzdfrqu","type":"rect","x":2,"y":38,"w":40,"h":32,"color":"#ff8a1a","label":"ловушка","lpos":"bottom"}],"bubbles":[{"id":"gjbdx58b","target":"LL","text":"Мой!","color":"#ffffff","below":false}],"cap":"Пас на фланг — сигнал. Латераль выходит, полузащитник закрывает пас внутрь, нападающий — пас назад.","chapter":"","dur":1100,"hold":2800},{"id":"2bivz0o4","pos":{"GK":[50,94],"LL":[17,51],"LC":[30,74],"RC":[52,77],"RL":[72,75],"LM":[28,54],"RM":[54,62],"ST":[38,46],"og":[50,5],"o1":[25,24],"o2":[50,20],"o3":[75,24],"o4":[12,44],"o5":[50,36],"o6":[82,40],"o7":[50,56]},"ball":{"owner":"LL"},"hl":[],"dim":["o4"],"focus":["LL"],"arrows":[],"zones":[],"bubbles":[{"id":"te0scm3v","target":"LL","text":"Пошли!","color":"#ff8a1a","below":true}],"cap":"Зажали у бровки — отбор. Сразу «Пошли!»","chapter":"","dur":1100,"hold":2200},{"id":"expmbl0v","pos":{"GK":[50,94],"LL":[15,75],"LC":[38,78],"RC":[62,78],"RL":[85,75],"LM":[37,63],"RM":[63,63],"ST":[50,49],"og":[50,5],"o1":[26,26],"o2":[50,22],"o3":[74,26],"o4":[18,42],"o6":[82,42],"o5":[40,42],"o7":[58,58]},"ball":{"owner":"o5"},"hl":[],"dim":[],"focus":[],"arrows":[],"zones":[],"bubbles":[],"cap":"Соперник ищет пас между нашими линиями.","chapter":"Ловушка в центре","dur":1100,"hold":1600},{"id":"2ic06t90","pos":{"GK":[50,94],"LL":[20,76],"LC":[44,76],"RC":[56,70],"RL":[76,76],"LM":[44,62],"RM":[62,60],"ST":[56,48],"og":[50,5],"o1":[26,26],"o2":[50,22],"o3":[74,26],"o4":[18,42],"o6":[82,42],"o5":[40,42],"o7":[52,60]},"ball":{"owner":"o7"},"hl":[],"dim":[],"focus":["RC"],"arrows":[{"id":"pfnv0f7l","kind":"line","from":{"e":"o5"},"to":{"e":"o7"},"head":true,"bend":0,"style":"solid","color":"opp","width":3},{"id":"0sk5bfv0","kind":"move","target":"RC","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[],"bubbles":[{"id":"onpe7h8e","target":"RC","text":"Мой!","color":"#ffffff","below":true}],"cap":"Приём спиной к нашим воротам — сигнал. Защитник выходит сзади, полузащитники зажимают с боков.","chapter":"","dur":1100,"hold":2800},{"id":"jrn29ird","pos":{"GK":[50,94],"LL":[20,76],"LC":[44,76],"RC":[54,64],"RL":[76,76],"LM":[44,60],"RM":[60,58],"ST":[56,48],"og":[50,5],"o1":[26,26],"o2":[50,22],"o3":[74,26],"o4":[18,42],"o6":[82,42],"o5":[40,42],"o7":[50,55]},"ball":{"owner":"RC"},"hl":[],"dim":["o7"],"focus":["RC"],"arrows":[],"zones":[],"bubbles":[],"cap":"Отбор! Первый пас — сразу вперёд.","chapter":"","dur":1100,"hold":2200}],"autoplay":true,"loop":false,"still":false,"legend":true}},{"id":"00hxg8ei","layout":"split","nav":"Кто бежит","title":"Кто бежит в контратаку","subtitle":"На поле некогда думать, поэтому решает один признак — где отобрали мяч.","body":"Отобрали справа :: бегут **правый латераль, нападающий и правый полузащитник**\nОтобрали слева :: бегут **левый латераль, нападающий и левый полузащитник**\nОтобрали в центре :: бегут **основной латераль, нападающий и разгоняющий полузащитник** — назначаем до игры\n\n- **Трое бегут — четверо стоят.** Второй латераль, оба центральных защитника и опорный никуда не уходят.\n- **Голос обязателен.** Кто отобрал — !!Пошли!!!, маятник — !!Иду!!!, второй латераль — !!Стою!!!\n- **Сомневаешься — стой.** Лучше контратака вдвоём, чем гол в пустую зону за спиной.","side":"left","board":{"entities":[{"id":"GK","kind":"ours","label":"ВР","number":"1","gk":true},{"id":"LL","kind":"ours","label":"ЛЛ","number":"3","gk":false},{"id":"LC","kind":"ours","label":"ЛЦ","number":"5","gk":false},{"id":"RC","kind":"ours","label":"ПЦ","number":"4","gk":false},{"id":"RL","kind":"ours","label":"ПЛ","number":"2","gk":false},{"id":"LM","kind":"ours","label":"ЛП","number":"8","gk":false},{"id":"RM","kind":"ours","label":"ПП","number":"6","gk":false},{"id":"ST","kind":"ours","label":"Н","number":"9","gk":false}],"frames":[{"id":"s9z11q2f","pos":{"GK":[50,94],"LL":[15,75],"LC":[38,78],"RC":[62,78],"RL":[84,70],"LM":[37,63],"RM":[63,63],"ST":[50,49]},"ball":{"owner":"RL"},"hl":[],"dim":[],"focus":["RL"],"arrows":[],"zones":[{"id":"ycgf99on","type":"rect","x":67,"y":2,"w":31,"h":96,"color":"#ffffff","label":"правый фланг","lpos":"top"}],"bubbles":[],"cap":"Мяч отобрали на **правом** фланге.","chapter":"Отбор справа","dur":1100,"hold":1500},{"id":"yxlohrfp","pos":{"GK":[50,92],"LL":[26,70],"LC":[44,72],"RC":[64,70],"RL":[86,26],"LM":[46,58],"RM":[60,34],"ST":[42,16]},"ball":{"owner":"RL"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"m2tcj1ps","kind":"move","target":"LL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"fuvgah7b","kind":"move","target":"LC","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"nn6417l5","kind":"move","target":"RC","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"9psjtqcq","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"hsec0467","kind":"move","target":"LM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"fft7igse","kind":"move","target":"RM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"khzx1y6a","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[{"id":"kjct81l4","type":"link","ids":["LL","LC","RC"],"color":"#ffffff","label":"3","lpos":"margin"},{"id":"lb2drap3","type":"ring","target":"LM","r":24,"color":"#ffffff","label":"опорный","lpos":"above"},{"id":"phbqf3lv","type":"hull","ids":["RM","RL","ST"],"color":"#ff8a1a","label":"бегут трое"}],"bubbles":[{"id":"05rgg8vf","target":"RL","text":"Иду!","color":"#ff8a1a","below":false},{"id":"vzhofodp","target":"LL","text":"Стою!","color":"#ffffff","below":false}],"cap":"Бегут **правый латераль, нападающий и правый полузащитник**. Левые остаются.","chapter":"","dur":1100,"hold":3000},{"id":"ivex65uu","pos":{"GK":[50,94],"LL":[16,70],"LC":[38,78],"RC":[62,78],"RL":[85,75],"LM":[37,63],"RM":[63,63],"ST":[50,49]},"ball":{"owner":"LL"},"hl":[],"dim":[],"focus":["LL"],"arrows":[],"zones":[{"id":"8hrd6384","type":"rect","x":2,"y":2,"w":31,"h":96,"color":"#ffffff","label":"левый фланг","lpos":"top"}],"bubbles":[],"cap":"Мяч отобрали на **левом** фланге.","chapter":"Отбор слева","dur":1100,"hold":1500},{"id":"ohngcnub","pos":{"GK":[50,92],"LL":[14,26],"LC":[36,70],"RC":[56,72],"RL":[74,70],"LM":[40,34],"RM":[54,58],"ST":[58,16]},"ball":{"owner":"LL"},"hl":["LL"],"dim":[],"focus":[],"arrows":[{"id":"xd3qcsji","kind":"move","target":"LL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"nk932ou8","kind":"move","target":"LC","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"l02ky28z","kind":"move","target":"RC","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"8mqifa82","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"ygtzmt8g","kind":"move","target":"LM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"7cc1kyu4","kind":"move","target":"RM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"aqvltjtw","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[{"id":"mhv3zd8w","type":"link","ids":["LC","RC","RL"],"color":"#ffffff","label":"3","lpos":"margin"},{"id":"teii9fn3","type":"ring","target":"RM","r":24,"color":"#ffffff","label":"опорный","lpos":"above"},{"id":"93ipk0pb","type":"hull","ids":["LM","LL","ST"],"color":"#ff8a1a","label":"бегут трое"}],"bubbles":[{"id":"og0czds6","target":"LL","text":"Иду!","color":"#ff8a1a","below":false},{"id":"36urhdry","target":"RL","text":"Стою!","color":"#ffffff","below":false}],"cap":"Бегут **левый латераль, нападающий и левый полузащитник**.","chapter":"","dur":1100,"hold":3000},{"id":"yz1fwi1e","pos":{"GK":[50,94],"LL":[15,75],"LC":[38,78],"RC":[62,78],"RL":[85,75],"LM":[37,63],"RM":[58,62],"ST":[50,49]},"ball":{"owner":"RM"},"hl":[],"dim":[],"focus":["RM"],"arrows":[],"zones":[{"id":"y3vg2ppx","type":"rect","x":34,"y":2,"w":32,"h":96,"color":"#ffffff","label":"центр","lpos":"top"}],"bubbles":[],"cap":"Мяч отобрали в **центре**.","chapter":"Отбор в центре","dur":1100,"hold":1500},{"id":"i9lt5z4k","pos":{"GK":[50,92],"LL":[26,70],"LC":[44,72],"RC":[64,70],"RL":[86,26],"LM":[46,58],"RM":[60,34],"ST":[42,16]},"ball":{"owner":"RM"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"r907iuca","kind":"move","target":"LL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"mpw2uqz6","kind":"move","target":"LC","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"wnc24knx","kind":"move","target":"RC","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"w8zk6mdx","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"j8uis6w1","kind":"move","target":"LM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"pyopxhj2","kind":"move","target":"RM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"1h0cxj8j","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[{"id":"2cwkfmpv","type":"link","ids":["LL","LC","RC"],"color":"#ffffff","label":"3","lpos":"margin"},{"id":"hccq40rs","type":"ring","target":"LM","r":24,"color":"#ffffff","label":"опорный","lpos":"above"},{"id":"q0aqs1sq","type":"hull","ids":["RM","RL","ST"],"color":"#ff8a1a","label":"бегут трое"}],"bubbles":[{"id":"ft35e3t0","target":"RL","text":"Иду!","color":"#ff8a1a","below":false},{"id":"fimgvxmb","target":"LL","text":"Стою!","color":"#ffffff","below":false}],"cap":"Бегут **основной латераль и разгоняющий полузащитник** — их назначаем до игры. На схеме это правые.","chapter":"","dur":1100,"hold":3000}],"autoplay":true,"loop":false,"still":false,"legend":true}},{"id":"oju0kqa2","layout":"split","nav":"Контратака","title":"Контратака — по шагам","subtitle":"Пока соперник раскрыт после потери, у нас есть 6–10 секунд. Дальше он успеет вернуться.","body":"1. **Отбор и «Пошли!»** Кто отобрал или первым увидел — кричит.\n2. **Первый пас — вперёд, в одно-два касания.** Не назад и не поперёк. Вперёд некому — ведение на скорости в свободную зону.\n3. **Трое на ускорении.** Маятник по флангу, нападающий за спину, полузащитник поддерживает.\n4. **Четверо страхуют.** Трое защитников сдвигаются, опорный встаёт перед ними.\n5. **Пас на ход в свободную зону**, а не в ноги. Бегущий быстрее ведущего.\n6. **Удар за 10 секунд.** Прострел, навес, удар. Не получилось — «Держим!».","side":"left","board":{"entities":[{"id":"GK","kind":"ours","label":"ВР","number":"1","gk":true},{"id":"LL","kind":"ours","label":"ЛЛ","number":"3","gk":false},{"id":"LC","kind":"ours","label":"ЛЦ","number":"5","gk":false},{"id":"RC","kind":"ours","label":"ПЦ","number":"4","gk":false},{"id":"RL","kind":"ours","label":"ПЛ","number":"2","gk":false},{"id":"LM","kind":"ours","label":"ЛП","number":"8","gk":false},{"id":"RM","kind":"ours","label":"ПП","number":"6","gk":false},{"id":"ST","kind":"ours","label":"Н","number":"9","gk":false},{"id":"og","kind":"opp","label":"","number":"1","gk":true},{"id":"o1","kind":"opp","label":"","number":"1","gk":false},{"id":"o2","kind":"opp","label":"","number":"2","gk":false},{"id":"o3","kind":"opp","label":"","number":"3","gk":false},{"id":"o4","kind":"opp","label":"","number":"4","gk":false},{"id":"o5","kind":"opp","label":"","number":"5","gk":false},{"id":"o6","kind":"opp","label":"","number":"6","gk":false},{"id":"o7","kind":"opp","label":"","number":"7","gk":false}],"frames":[{"id":"kwfjsq1a","pos":{"GK":[50,94],"LL":[24,76],"LC":[44,79],"RC":[64,78],"RL":[82,72],"LM":[42,64],"RM":[66,64],"ST":[56,50],"og":[50,5],"o1":[32,38],"o2":[60,36],"o3":[16,52],"o4":[40,56],"o5":[62,58],"o6":[84,66],"o7":[54,74]},"ball":{"owner":"o6"},"hl":[],"dim":[],"focus":[],"arrows":[],"zones":[],"bubbles":[],"cap":"Соперник атакует по нашему правому флангу. Его защитники поднялись к центру.","chapter":"","dur":1100,"hold":2000},{"id":"ic1438h6","pos":{"GK":[50,94],"LL":[24,76],"LC":[44,79],"RC":[64,78],"RL":[84,68],"LM":[42,64],"RM":[66,64],"ST":[56,50],"og":[50,5],"o1":[32,38],"o2":[60,36],"o3":[16,52],"o4":[40,56],"o5":[56,56],"o6":[90,76],"o7":[54,74]},"ball":{"owner":"RL"},"hl":[],"dim":["o6"],"focus":["RL"],"arrows":[],"zones":[{"id":"b1ryxl6c","type":"ring","target":"RL","r":30,"color":"#ffffff","label":"","lpos":"below"}],"bubbles":[{"id":"aec1agka","target":"RL","text":"Пошли!","color":"#ff8a1a","below":false}],"cap":"Отбор! Кто отобрал — кричит «Пошли!»","chapter":"","dur":1100,"hold":1700},{"id":"tsn41js0","pos":{"GK":[50,94],"LL":[24,76],"LC":[44,79],"RC":[64,78],"RL":[86,56],"LM":[42,64],"RM":[66,58],"ST":[56,50],"og":[50,5],"o1":[32,38],"o2":[60,36],"o3":[16,52],"o4":[40,56],"o5":[56,56],"o6":[90,76],"o7":[54,74]},"ball":{"owner":"RM"},"hl":["RL"],"dim":["o6"],"focus":[],"arrows":[{"id":"w2cgksoe","kind":"line","from":{"e":"RL"},"to":{"e":"RM"},"head":true,"bend":0,"style":"solid","color":"pass","width":3},{"id":"8v8g3r20","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[],"bubbles":[{"id":"9lohm54y","target":"RL","text":"Иду!","color":"#ff8a1a","below":false}],"cap":"Первый пас — вперёд, в одно касание. Маятник сразу рвёт по флангу.","chapter":"","dur":1100,"hold":2000},{"id":"ixgxzspx","pos":{"GK":[50,94],"LL":[28,74],"LC":[46,76],"RC":[64,74],"RL":[86,36],"LM":[48,62],"RM":[62,44],"ST":[44,28],"og":[50,5],"o1":[34,40],"o2":[56,40],"o3":[16,52],"o4":[40,56],"o5":[58,54],"o6":[90,76],"o7":[54,74]},"ball":{"owner":"RM"},"hl":["RL"],"dim":["o6"],"focus":[],"arrows":[{"id":"6guviq7g","kind":"move","target":"RM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"dsw0ft4j","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"msze8nil","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[{"id":"hzawxiz2","type":"link","ids":["LL","LC","RC"],"color":"#ffffff","label":"3","lpos":"margin"},{"id":"5ncifijl","type":"ring","target":"LM","r":24,"color":"#ffffff","label":"опорный","lpos":"below"}],"bubbles":[{"id":"ynp5itk8","target":"LL","text":"Стою!","color":"#ffffff","below":true}],"cap":"Трое на ускорении: полузащитник с мячом, маятник по флангу, нападающий за спину. Четверо страхуют.","chapter":"","dur":1100,"hold":2800},{"id":"dpist56l","pos":{"GK":[50,94],"LL":[28,74],"LC":[46,76],"RC":[64,74],"RL":[88,22],"LM":[48,62],"RM":[60,30],"ST":[40,16],"og":[50,5],"o1":[36,30],"o2":[54,36],"o3":[16,52],"o4":[40,56],"o5":[58,54],"o6":[90,76],"o7":[54,74]},"ball":{"owner":"RL"},"hl":["RL"],"dim":["o6"],"focus":[],"arrows":[{"id":"etoz4vbl","kind":"line","from":{"e":"RM"},"to":{"e":"RL"},"head":true,"bend":0,"style":"solid","color":"pass","width":3},{"id":"3o6nt6qc","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[],"bubbles":[],"cap":"Пас на ход маятнику — в свободную зону, а не в ноги.","chapter":"","dur":1100,"hold":1900},{"id":"bc86odwu","pos":{"GK":[50,94],"LL":[28,74],"LC":[46,76],"RC":[64,74],"RL":[88,14],"LM":[48,62],"RM":[60,30],"ST":[44,12],"og":[40,5],"o1":[38,22],"o2":[54,36],"o3":[16,52],"o4":[40,56],"o5":[58,54],"o6":[90,76],"o7":[54,74]},"ball":{"owner":"ST"},"hl":["RL"],"dim":["o6"],"focus":[],"arrows":[{"id":"zm4xua62","kind":"line","from":{"e":"RL"},"to":{"e":"ST"},"head":true,"bend":0,"style":"solid","color":"pass","width":3}],"zones":[],"bubbles":[],"cap":"Прострел на нападающего. От отбора до удара — 6–8 секунд.","chapter":"","dur":1100,"hold":1600},{"id":"udz82ym1","pos":{"GK":[50,94],"LL":[28,74],"LC":[46,76],"RC":[64,74],"RL":[88,14],"LM":[48,62],"RM":[60,30],"ST":[44,12],"og":[40,5],"o1":[38,22],"o2":[54,36],"o3":[16,52],"o4":[40,56],"o5":[58,54],"o6":[90,76],"o7":[54,74]},"ball":{"at":[55,-1]},"hl":["RL"],"dim":["o6"],"focus":[],"arrows":[{"id":"dvcooglb","kind":"line","from":{"e":"ST"},"to":{"p":[55,0]},"head":true,"bend":0,"style":"solid","color":"pass","width":4.2}],"zones":[],"bubbles":[],"cap":"Удар.","chapter":"","dur":1100,"hold":2000}],"autoplay":true,"loop":false,"still":false,"legend":true}},{"id":"izfmfwrb","layout":"split","nav":"Два варианта","title":"Два способа контратаки","subtitle":"Моментов за игру будет немного, поэтому комбинации должны быть отработаны.","body":"## Длинный пас за спину\nСоперник поднял защитников к центру поля. Перехватили — сразу длинный пас на ход нападающему. Маятник и полузащитник догоняют на добивание.\n## Через нападающего\nОтбор в центре, пас в ноги нападающему. Он закрывает мяч корпусом и скидывает набегающему полузащитнику, тот отдаёт на ход маятнику. Нападающий разворачивается и бежит в штрафную.\n\n> На ускорении игрок без мяча быстрее любого дриблинга. Мяч должен бежать впереди.","side":"left","board":{"entities":[{"id":"GK","kind":"ours","label":"ВР","number":"1","gk":true},{"id":"LL","kind":"ours","label":"ЛЛ","number":"3","gk":false},{"id":"LC","kind":"ours","label":"ЛЦ","number":"5","gk":false},{"id":"RC","kind":"ours","label":"ПЦ","number":"4","gk":false},{"id":"RL","kind":"ours","label":"ПЛ","number":"2","gk":false},{"id":"LM","kind":"ours","label":"ЛП","number":"8","gk":false},{"id":"RM","kind":"ours","label":"ПП","number":"6","gk":false},{"id":"ST","kind":"ours","label":"Н","number":"9","gk":false},{"id":"og","kind":"opp","label":"","number":"1","gk":true},{"id":"o1","kind":"opp","label":"","number":"1","gk":false},{"id":"o2","kind":"opp","label":"","number":"2","gk":false},{"id":"o3","kind":"opp","label":"","number":"3","gk":false},{"id":"o4","kind":"opp","label":"","number":"4","gk":false},{"id":"o5","kind":"opp","label":"","number":"5","gk":false},{"id":"o6","kind":"opp","label":"","number":"6","gk":false},{"id":"o7","kind":"opp","label":"","number":"7","gk":false}],"frames":[{"id":"b4zubfec","pos":{"GK":[50,94],"LL":[15,75],"LC":[38,78],"RC":[62,78],"RL":[85,75],"LM":[37,63],"RM":[63,63],"ST":[50,49],"og":[50,6],"o1":[34,44],"o2":[62,44],"o3":[14,58],"o4":[44,58],"o5":[58,56],"o6":[86,62],"o7":[50,72]},"ball":{"owner":"o4"},"hl":[],"dim":[],"focus":[],"arrows":[],"zones":[{"id":"2pxvmgof","type":"rect","x":10,"y":3,"w":80,"h":34,"color":"#ff8a1a","label":"за спиной пусто","lpos":"bottom"}],"bubbles":[],"cap":"Соперник поднял защитников к центру поля — за их спиной пусто.","chapter":"Длинный пас за спину","dur":1100,"hold":2000},{"id":"nm037v6x","pos":{"GK":[50,94],"LL":[15,75],"LC":[42,74],"RC":[62,78],"RL":[85,75],"LM":[37,63],"RM":[63,63],"ST":[50,49],"og":[50,6],"o1":[34,44],"o2":[62,44],"o3":[14,58],"o4":[44,58],"o5":[58,56],"o6":[86,62],"o7":[50,72]},"ball":{"owner":"LC"},"hl":[],"dim":[],"focus":["LC"],"arrows":[{"id":"bkyzidtu","kind":"line","from":{"e":"o4"},"to":{"p":[44,72]},"head":true,"bend":0,"style":"solid","color":"opp","width":3}],"zones":[],"bubbles":[],"cap":"Перехват…","chapter":"","dur":1100,"hold":1100},{"id":"4twrx73f","pos":{"GK":[50,94],"LL":[15,75],"LC":[42,74],"RC":[62,78],"RL":[85,75],"LM":[32,64],"RM":[63,63],"ST":[44,24],"og":[50,6],"o1":[34,44],"o2":[62,44],"o3":[14,58],"o4":[44,58],"o5":[58,56],"o6":[86,62],"o7":[50,72]},"ball":{"owner":"ST"},"hl":[],"dim":[],"focus":[],"arrows":[{"id":"c0y2di2q","kind":"line","from":{"e":"LC"},"to":{"e":"ST"},"head":true,"bend":-16,"style":"solid","color":"pass","width":3},{"id":"we50smcs","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[],"bubbles":[{"id":"anm4xnb3","target":"LC","text":"Пошли!","color":"#ff8a1a","below":true}],"cap":"…и сразу длинный пас на ход нападающему.","chapter":"","dur":1100,"hold":1800},{"id":"2cwqf2e7","pos":{"GK":[50,94],"LL":[15,75],"LC":[42,74],"RC":[62,78],"RL":[84,40],"LM":[32,64],"RM":[70,46],"ST":[46,12],"og":[56,6],"o1":[38,34],"o2":[58,36],"o3":[14,58],"o4":[44,58],"o5":[58,56],"o6":[86,62],"o7":[50,72]},"ball":{"owner":"ST"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"fcjmoajv","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"o52h4d5z","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"8q252aog","kind":"move","target":"RM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[],"bubbles":[],"cap":"Нападающий один на один. Маятник и полузащитник догоняют на ускорении — на добивание.","chapter":"","dur":1100,"hold":2000},{"id":"ok1tzu5d","pos":{"GK":[50,94],"LL":[15,75],"LC":[42,74],"RC":[62,78],"RL":[84,40],"LM":[32,64],"RM":[70,46],"ST":[46,12],"og":[56,6],"o1":[38,34],"o2":[58,36],"o3":[14,58],"o4":[44,58],"o5":[58,56],"o6":[86,62],"o7":[50,72]},"ball":{"at":[42,-1]},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"h7kxq52x","kind":"line","from":{"e":"ST"},"to":{"p":[42,0]},"head":true,"bend":0,"style":"solid","color":"pass","width":4.2}],"zones":[],"bubbles":[],"cap":"Удар в дальний угол.","chapter":"","dur":1100,"hold":2000},{"id":"ofngi85g","pos":{"GK":[50,94],"LL":[18,74],"LC":[40,78],"RC":[62,78],"RL":[84,72],"LM":[40,62],"RM":[62,60],"ST":[52,46],"og":[50,6],"o1":[38,36],"o2":[54,38],"o3":[16,50],"o4":[46,52],"o5":[70,56],"o6":[90,66],"o7":[50,70]},"ball":{"owner":"RM"},"hl":[],"dim":[],"focus":["ST"],"arrows":[],"zones":[],"bubbles":[],"cap":"Отбор в центре. Нападающий показывается под пас спиной к воротам.","chapter":"Через нападающего","dur":1100,"hold":1800},{"id":"xrqrugif","pos":{"GK":[50,94],"LL":[18,74],"LC":[40,78],"RC":[62,78],"RL":[86,58],"LM":[40,62],"RM":[64,50],"ST":[52,46],"og":[50,6],"o1":[38,36],"o2":[54,38],"o3":[16,50],"o4":[46,52],"o5":[70,56],"o6":[90,66],"o7":[50,70]},"ball":{"owner":"ST"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"5l5to7td","kind":"line","from":{"e":"RM"},"to":{"e":"ST"},"head":true,"bend":0,"style":"solid","color":"pass","width":3},{"id":"813j4fgg","kind":"move","target":"RM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"0bfn4x7k","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[],"bubbles":[],"cap":"Пас в ноги. Нападающий не разворачивается, а закрывает мяч корпусом.","chapter":"","dur":1100,"hold":1900},{"id":"0fq5kjyb","pos":{"GK":[50,94],"LL":[18,74],"LC":[40,78],"RC":[62,78],"RL":[88,44],"LM":[40,62],"RM":[66,38],"ST":[52,46],"og":[50,6],"o1":[38,36],"o2":[58,42],"o3":[16,50],"o4":[46,52],"o5":[70,56],"o6":[90,66],"o7":[50,70]},"ball":{"owner":"RM"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"l79ndagc","kind":"line","from":{"e":"ST"},"to":{"e":"RM"},"head":true,"bend":0,"style":"solid","color":"pass","width":3},{"id":"hxtv8wor","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[],"bubbles":[],"cap":"Скидка набегающему полузащитнику…","chapter":"","dur":1100,"hold":1500},{"id":"ixunwopi","pos":{"GK":[50,94],"LL":[18,74],"LC":[40,78],"RC":[62,78],"RL":[88,22],"LM":[40,62],"RM":[66,38],"ST":[46,20],"og":[50,6],"o1":[38,36],"o2":[58,42],"o3":[16,50],"o4":[46,52],"o5":[70,56],"o6":[90,66],"o7":[50,70]},"ball":{"owner":"RL"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"5annrba2","kind":"line","from":{"e":"RM"},"to":{"e":"RL"},"head":true,"bend":0,"style":"solid","color":"pass","width":3},{"id":"iahm9elm","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[],"bubbles":[],"cap":"…пас на ход маятнику. Нападающий разворачивается и бежит в штрафную.","chapter":"","dur":1100,"hold":1900},{"id":"7eapnovw","pos":{"GK":[50,94],"LL":[18,74],"LC":[40,78],"RC":[62,78],"RL":[88,22],"LM":[40,62],"RM":[58,24],"ST":[44,14],"og":[52,6],"o1":[40,26],"o2":[58,42],"o3":[16,50],"o4":[46,52],"o5":[70,56],"o6":[90,66],"o7":[50,70]},"ball":{"owner":"ST"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"n6jot0vq","kind":"line","from":{"e":"RL"},"to":{"e":"ST"},"head":true,"bend":0,"style":"solid","color":"pass","width":3},{"id":"ktiiq8xw","kind":"move","target":"RM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[],"bubbles":[],"cap":"Прострел — и в штрафной уже двое.","chapter":"","dur":1100,"hold":2200}],"autoplay":true,"loop":false,"still":false,"legend":true}},{"id":"4sf2xjg9","layout":"split","nav":"Страховка","title":"Пока бежим вперёд — сзади четверо","subtitle":"Контратака рискует тремя игроками, а не всей командой.","body":"- **Трое бегут — четверо стоят.** Второй латераль, оба центральных защитника и опорный.\n- **Линия — в середине нашей половины.** Не у штрафной и не на центре поля: так успеваем и к длинному пасу, и к отскоку.\n- **Опорный — перед защитниками.** Первым встречает контратаку соперника и закрывает центр.\n- **Считаем их нападающих.** Если впереди у соперника остались трое, второй полузащитник тоже не бежит — атакуем вдвоём.","side":"left","board":{"entities":[{"id":"GK","kind":"ours","label":"ВР","number":"1","gk":true},{"id":"LL","kind":"ours","label":"ЛЛ","number":"3","gk":false},{"id":"LC","kind":"ours","label":"ЛЦ","number":"5","gk":false},{"id":"RC","kind":"ours","label":"ПЦ","number":"4","gk":false},{"id":"LM","kind":"ours","label":"ЛП","number":"8","gk":false},{"id":"RM","kind":"ours","label":"ПП","number":"6","gk":false},{"id":"RL","kind":"ours","label":"ПЛ","number":"2","gk":false},{"id":"ST","kind":"ours","label":"Н","number":"9","gk":false},{"id":"og","kind":"opp","label":"","number":"1","gk":true},{"id":"o1","kind":"opp","label":"","number":"1","gk":false},{"id":"o2","kind":"opp","label":"","number":"2","gk":false},{"id":"o3","kind":"opp","label":"","number":"3","gk":false},{"id":"o4","kind":"opp","label":"","number":"4","gk":false},{"id":"o5","kind":"opp","label":"","number":"5","gk":false},{"id":"o6","kind":"opp","label":"","number":"6","gk":false},{"id":"o7","kind":"opp","label":"","number":"7","gk":false}],"frames":[{"id":"o4vseh23","pos":{"GK":[50,92],"LL":[26,70],"LC":[44,72],"RC":[64,70],"LM":[46,58],"RM":[60,34],"RL":[86,26],"ST":[42,16],"og":[50,5],"o1":[36,20],"o2":[58,20],"o3":[16,40],"o4":[40,48],"o5":[60,46],"o6":[80,40],"o7":[54,66]},"ball":{"owner":"RL"},"hl":["RL"],"dim":[],"focus":[],"arrows":[],"zones":[{"id":"6j2fg6bd","type":"hull","ids":["RM","RL","ST"],"color":"#ff8a1a","label":""}],"bubbles":[],"cap":"Контратака идёт втроём. Впереди у соперника один нападающий.","chapter":"","dur":1100,"hold":2400},{"id":"bxpep6wc","pos":{"GK":[50,92],"LL":[26,70],"LC":[44,72],"RC":[64,70],"LM":[46,58],"RM":[60,34],"RL":[86,26],"ST":[42,16],"og":[50,5],"o1":[36,20],"o2":[58,20],"o3":[16,40],"o4":[40,48],"o5":[60,46],"o6":[80,40],"o7":[54,66]},"ball":{"owner":"RL"},"hl":["RL"],"dim":[],"focus":[],"arrows":[],"zones":[{"id":"xyc9t51i","type":"rect","x":8,"y":50,"w":84,"h":34,"color":"#ffffff","label":"четверо страхуют","lpos":"bottom"},{"id":"al77tx04","type":"ring","target":"o7","r":22,"color":"#ff5a4e","label":"","lpos":"below"}],"bubbles":[],"cap":"Сзади четверо на одного: защитники держат линию в середине нашей половины, опорный — перед ними.","chapter":"","dur":1100,"hold":2800},{"id":"ewfmwfug","pos":{"GK":[50,92],"LL":[26,70],"LC":[48,72],"RC":[62,72],"LM":[50,60],"RM":[60,34],"RL":[86,26],"ST":[42,16],"og":[50,5],"o1":[36,20],"o2":[58,20],"o3":[16,40],"o4":[40,48],"o5":[60,46],"o6":[80,40],"o7":[54,66]},"ball":{"owner":"o7"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"utx4jztq","kind":"line","from":{"e":"o2"},"to":{"e":"o7"},"head":true,"bend":0,"style":"solid","color":"opp","width":3}],"zones":[],"bubbles":[],"cap":"Потеряли мяч, соперник бьёт длинно — а рядом с его нападающим уже трое наших.","chapter":"","dur":1100,"hold":2400},{"id":"xw0jgbsp","pos":{"GK":[50,92],"LL":[26,70],"LC":[52,70],"RC":[62,72],"LM":[50,60],"RM":[60,34],"RL":[86,26],"ST":[42,16],"og":[50,5],"o1":[36,20],"o2":[58,20],"o3":[16,40],"o4":[40,48],"o5":[60,46],"o6":[80,40],"o7":[56,64]},"ball":{"owner":"LC"},"hl":["RL"],"dim":["o7"],"focus":["LC"],"arrows":[],"zones":[],"bubbles":[{"id":"0mg15gkq","target":"LC","text":"Мой!","color":"#ffffff","below":true}],"cap":"Отбор — и можно снова «Пошли!».","chapter":"","dur":1100,"hold":2200}],"autoplay":true,"loop":false,"still":false,"legend":true}},{"id":"onnb65ye","layout":"split","nav":"Если не вышло","title":"Контратака не вышла: «Держим!» или «Домой!»","subtitle":"Не забили за 10 секунд — не отдаём мяч глупо и не оставляем пустые зоны.","body":"## Соперник успел вернуться\n- **Не бьём с плохой позиции** и не лезем втроём против пятерых.\n- **«Держим!» — пас назад**, спокойно владеем в 3-3-1: маятник остаётся широко, трое сзади.\n- **Ждём, пока соперник раскроется.** Появился пас за спину — снова «Пошли!».\n## Потеряли мяч\n1. **Ближний к мячу задерживает.** Не лезет в подкат, а мешает отдать пас вперёд.\n2. **Остальные — «Домой!»** Бегом, а не шагом.\n3. **Маятник возвращается на максимальной скорости.** Пока его нет, опорный закрывает центр.\n4. **Через 5–6 секунд мы снова в 4-2-1.**","side":"left","board":{"entities":[{"id":"GK","kind":"ours","label":"ВР","number":"1","gk":true},{"id":"LL","kind":"ours","label":"ЛЛ","number":"3","gk":false},{"id":"LC","kind":"ours","label":"ЛЦ","number":"5","gk":false},{"id":"RC","kind":"ours","label":"ПЦ","number":"4","gk":false},{"id":"LM","kind":"ours","label":"ЛП","number":"8","gk":false},{"id":"RM","kind":"ours","label":"ПП","number":"6","gk":false},{"id":"RL","kind":"ours","label":"ПЛ","number":"2","gk":false},{"id":"ST","kind":"ours","label":"Н","number":"9","gk":false},{"id":"og","kind":"opp","label":"","number":"1","gk":true},{"id":"o1","kind":"opp","label":"","number":"1","gk":false},{"id":"o2","kind":"opp","label":"","number":"2","gk":false},{"id":"o3","kind":"opp","label":"","number":"3","gk":false},{"id":"o4","kind":"opp","label":"","number":"4","gk":false},{"id":"o5","kind":"opp","label":"","number":"5","gk":false},{"id":"o6","kind":"opp","label":"","number":"6","gk":false},{"id":"o7","kind":"opp","label":"","number":"7","gk":false}],"frames":[{"id":"dvscefsb","pos":{"GK":[50,92],"LL":[26,70],"LC":[44,72],"RC":[64,70],"LM":[46,58],"RM":[60,34],"RL":[84,30],"ST":[48,20],"og":[50,5],"o1":[38,22],"o2":[58,24],"o3":[72,26],"o4":[44,34],"o5":[66,40],"o6":[22,44],"o7":[56,54]},"ball":{"owner":"RL"},"hl":["RL"],"dim":[],"focus":[],"arrows":[],"zones":[],"bubbles":[],"cap":"Соперник успел вернуться: впереди трое против пятерых, свободного паса нет.","chapter":"Держим мяч","dur":1100,"hold":2000},{"id":"fftqv31l","pos":{"GK":[50,92],"LL":[26,70],"LC":[44,72],"RC":[64,70],"LM":[46,58],"RM":[56,44],"RL":[86,38],"ST":[48,26],"og":[50,5],"o1":[38,22],"o2":[58,24],"o3":[72,26],"o4":[44,34],"o5":[66,40],"o6":[22,44],"o7":[56,54]},"ball":{"owner":"RC"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"wkkvfck0","kind":"line","from":{"e":"RL"},"to":{"e":"RC"},"head":true,"bend":0,"style":"solid","color":"pass","width":3}],"zones":[{"id":"04eaxkca","type":"link","ids":["LL","LC","RC"],"color":"#ffffff","label":"3","lpos":"margin"},{"id":"d0opn06t","type":"link","ids":["LM","RM","RL"],"color":"#ffffff","label":"3","lpos":"margin"},{"id":"dmp7bfnx","type":"link","ids":["ST"],"color":"#ffffff","label":"1","lpos":"margin"}],"bubbles":[{"id":"ymqjy6wl","target":"RL","text":"Держим!","color":"#ff8a1a","below":true}],"cap":"«Держим!» — не рискуем. Пас назад и спокойное владение в 3-3-1, маятник остаётся широко.","chapter":"","dur":1100,"hold":2800},{"id":"izl88llz","pos":{"GK":[50,92],"LL":[26,70],"LC":[44,72],"RC":[64,70],"LM":[40,54],"RM":[56,44],"RL":[86,38],"ST":[48,26],"og":[50,5],"o1":[38,22],"o2":[58,24],"o3":[72,26],"o4":[44,34],"o5":[66,40],"o6":[22,44],"o7":[56,54]},"ball":{"owner":"LC"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"09zhbeon","kind":"line","from":{"e":"RC"},"to":{"e":"LC"},"head":true,"bend":0,"style":"solid","color":"pass","width":3}],"zones":[{"id":"nhse9sri","type":"link","ids":["LL","LC","RC"],"color":"#ffffff","label":"3","lpos":"margin"},{"id":"gvnolrzu","type":"link","ids":["LM","RM","RL"],"color":"#ffffff","label":"3","lpos":"margin"},{"id":"wwte4d9w","type":"link","ids":["ST"],"color":"#ffffff","label":"1","lpos":"margin"}],"bubbles":[],"cap":"Ждём, пока соперник раскроется. Появился пас за спину — снова «Пошли!».","chapter":"","dur":1100,"hold":2400},{"id":"y7j7shir","pos":{"GK":[50,90],"LL":[25,66],"LC":[45,70],"RC":[65,66],"RL":[86,24],"LM":[44,56],"RM":[62,34],"ST":[50,18],"og":[50,4],"o1":[32,14],"o2":[56,12],"o3":[74,14],"o4":[30,30],"o5":[50,32],"o6":[80,30],"o7":[50,52]},"ball":{"owner":"o6"},"hl":["RL"],"dim":[],"focus":[],"arrows":[],"zones":[{"id":"euz0l6j2","type":"ring","target":"o6","r":28,"color":"#ff5a4e","label":"потеря","lpos":"below"}],"bubbles":[],"cap":"Потеряли мяч у чужой штрафной.","chapter":"Потеряли","dur":1100,"hold":1600},{"id":"a9t38ne8","pos":{"GK":[50,90],"LL":[24,72],"LC":[42,76],"RC":[62,74],"RL":[84,40],"LM":[46,62],"RM":[70,32],"ST":[42,34],"og":[50,4],"o1":[32,14],"o2":[56,12],"o3":[74,14],"o4":[30,30],"o5":[50,32],"o6":[80,30],"o7":[50,52]},"ball":{"owner":"o6"},"hl":["RL"],"dim":[],"focus":["RM"],"arrows":[{"id":"yac3y2z6","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"1lzikiju","kind":"move","target":"ST","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"ozfddi24","kind":"move","target":"LM","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"vtl6t3wl","kind":"move","target":"LL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"95focyiy","kind":"move","target":"LC","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8},{"id":"osucpiwj","kind":"move","target":"RC","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[],"bubbles":[{"id":"kfll4dy6","target":"LC","text":"Домой!","color":"#ffffff","below":false}],"cap":"Ближний задерживает: не лезет в подкат, а мешает отдать вперёд. Остальные — «Домой!»","chapter":"","dur":1100,"hold":2600},{"id":"7g96pipg","pos":{"GK":[50,90],"LL":[18,74],"LC":[38,78],"RC":[60,78],"RL":[86,58],"LM":[42,64],"RM":[62,50],"ST":[46,46],"og":[50,4],"o1":[32,14],"o2":[56,12],"o3":[74,14],"o4":[30,30],"o5":[56,44],"o6":[80,40],"o7":[52,62]},"ball":{"owner":"o7"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"cis6tn3q","kind":"line","from":{"e":"o6"},"to":{"e":"o7"},"head":true,"bend":0,"style":"solid","color":"opp","width":3},{"id":"pqxwgtzy","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"auto","width":2.8}],"zones":[{"id":"giq9nkft","type":"ring","target":"LM","r":24,"color":"#ffffff","label":"закрыл центр","lpos":"above"}],"bubbles":[],"cap":"Маятник бежит назад на максимальной скорости. Пока его нет, опорный закрывает центр, трое держат линию.","chapter":"","dur":1100,"hold":2800},{"id":"hu9wh95d","pos":{"GK":[50,90],"LL":[16,74],"LC":[38,78],"RC":[62,78],"RL":[84,74],"LM":[38,63],"RM":[62,62],"ST":[50,50],"og":[50,4],"o1":[32,14],"o2":[56,12],"o3":[74,14],"o4":[30,30],"o5":[56,44],"o6":[80,40],"o7":[50,58]},"ball":{"owner":"o7"},"hl":[],"dim":[],"focus":[],"arrows":[{"id":"1qq85i5l","kind":"move","target":"RL","head":true,"bend":0,"style":"dashed","color":"special","width":2.8}],"zones":[{"id":"cr2cazgr","type":"link","ids":["LL","LC","RC","RL"],"color":"#ffffff","label":"4","lpos":"margin"},{"id":"j4x6sgwn","type":"link","ids":["LM","RM"],"color":"#ffffff","label":"2","lpos":"margin"},{"id":"sfb4mai8","type":"link","ids":["ST"],"color":"#ffffff","label":"1","lpos":"margin"}],"bubbles":[],"cap":"Через 5–6 секунд после потери мы снова в блоке 4-2-1.","chapter":"","dur":1100,"hold":2400}],"autoplay":true,"loop":false,"still":false,"legend":true}},{"id":"zinkpapk","layout":"text","nav":"Плюсы и риски","title":"Честно: сильные стороны и риски","subtitle":"План рабочий, но у оборонительной игры есть цена. Лучше знать её до матча.","body":"## Что даёт такая игра\n- **Мало моментов у соперника.** Семь человек перед штрафной, пространства за спиной почти нет.\n- **Играем на своей сильной стороне.** Скорость латералей и нападающего опаснее всего, когда впереди пустое поле.\n- **Соперник открывается сам.** Владея мячом, он поднимает защитников и оставляет зону за спиной.\n- **Меньше риска при потере.** В контратаке рискуют трое, остальные всегда на местах.\n- **Экономим силы.** Спринтуем по сигналу, а не весь матч.\n||\n## Риски и что с ними делать\n- **Долго без мяча — давит на голову.** Договариваемся заранее: это наш план, а не оборона от безысходности.\n- **Удары издалека и стандарты у наших ворот.** Не фолим у штрафной, закрываем удар, отрабатываем стандарты.\n- **Бегуны много спринтуют.** Латералей и нападающего меняем чаще остальных.\n- **Контратак за игру немного.** Каждую доводим до удара — для этого две отработанные комбинации.\n- **Пропустили первыми.** Одной обороной не отыграться — план на слайде «По ситуации».","side":"left","board":null},{"id":"0xkikns8","layout":"split","nav":"Ошибки","title":"Ошибки, которые ломают схему","subtitle":"Первые три — на схеме, переключайте кнопками.","body":"- **Бегут все.** Сзади остаются один-два — любой длинный пас соперника становится выходом один на один.\n- **Ушли оба латераля.** Фланги пустые до самых ворот.\n- **Блок провалился в штрафную.** Соперник спокойно бьёт издалека и навешивает.\n- **Одиночный прессинг.** Один бежит к мячу без сигнала — за его спиной дыра.\n- **Медленный первый пас.** Две лишние секунды после отбора — и соперник уже вернулся.\n- **Маятник возвращается шагом.** Трое сзади долго держатся против всей атаки.","side":"left","board":{"entities":[{"id":"GK","kind":"ours","label":"ВР","number":"1","gk":true},{"id":"LC","kind":"ours","label":"ЛЦ","number":"5","gk":false},{"id":"LL","kind":"ours","label":"ЛЛ","number":"3","gk":false},{"id":"RC","kind":"ours","label":"ПЦ","number":"4","gk":false},{"id":"LM","kind":"ours","label":"ЛП","number":"8","gk":false},{"id":"RM","kind":"ours","label":"ПП","number":"6","gk":false},{"id":"RL","kind":"ours","label":"ПЛ","number":"2","gk":false},{"id":"ST","kind":"ours","label":"Н","number":"9","gk":false},{"id":"og","kind":"opp","label":"","number":"1","gk":true},{"id":"o1","kind":"opp","label":"","number":"1","gk":false},{"id":"o2","kind":"opp","label":"","number":"2","gk":false},{"id":"o3","kind":"opp","label":"","number":"3","gk":false},{"id":"o4","kind":"opp","label":"","number":"4","gk":false},{"id":"o5","kind":"opp","label":"","number":"5","gk":false},{"id":"o6","kind":"opp","label":"","number":"6","gk":false},{"id":"o7","kind":"opp","label":"","number":"7","gk":false}],"frames":[{"id":"yho36m04","pos":{"GK":[50,92],"LC":[50,68],"LL":[20,34],"RC":[70,40],"LM":[40,30],"RM":[60,28],"RL":[86,24],"ST":[48,14],"og":[50,4],"o1":[34,16],"o2":[56,12],"o3":[76,16],"o4":[26,52],"o5":[66,54],"o6":[84,48],"o7":[46,56]},"ball":{"owner":"o2"},"hl":["RL"],"dim":[],"focus":[],"arrows":[{"id":"b2lwljja","kind":"line","from":{"e":"o2"},"to":{"p":[30,72]},"head":true,"bend":0,"style":"solid","color":"opp","width":3},{"id":"yaydbcho","kind":"line","from":{"e":"o7"},"to":{"p":[32,72]},"head":true,"bend":0,"style":"dashed","color":"opp","width":2.8}],"zones":[{"id":"0wtjirbw","type":"rect","x":5,"y":52,"w":90,"h":36,"color":"#ff5a4e","label":"пусто","lpos":"bottom"}],"bubbles":[],"cap":"В контратаку убежали шестеро — сзади один защитник. Длинный пас, и соперник один на один.","chapter":"Бегут все","dur":1100,"hold":2000},{"id":"cwg6668k","pos":{"GK":[50,92],"LL":[14,30],"RL":[86,30],"LC":[40,64],"RC":[60,64],"LM":[40,50],"RM":[60,44],"ST":[50,20],"og":[50,4],"o4":[14,56],"o6":[86,56],"o7":[50,40]},"ball":{"owner":"o7"},"hl":["LL","RL"],"dim":[],"focus":[],"arrows":[{"id":"0b3n0jkr","kind":"line","from":{"e":"o7"},"to":{"p":[84,80]},"head":true,"bend":0,"style":"solid","color":"opp","width":3},{"id":"nee5m308","kind":"line","from":{"e":"o6"},"to":{"p":[88,84]},"head":true,"bend":0,"style":"dashed","color":"opp","width":2.8}],"zones":[{"id":"av2rtwni","type":"rect","x":2,"y":62,"w":28,"h":30,"color":"#ff5a4e","label":"пусто","lpos":"bottom"},{"id":"anoqz056","type":"rect","x":70,"y":62,"w":28,"h":30,"color":"#ff5a4e","label":"пусто","lpos":"bottom"}],"bubbles":[],"cap":"Ушли оба латераля — фланги пустые до самых ворот.","chapter":"Ушли оба латераля","dur":1100,"hold":2000},{"id":"131p3jcy","pos":{"GK":[50,95],"LL":[20,88],"LC":[36,90],"RC":[60,90],"RL":[80,88],"LM":[30,80],"RM":[62,80],"ST":[50,68],"og":[50,5],"o4":[30,64],"o5":[36,60],"o6":[72,64],"o7":[52,74]},"ball":{"owner":"o5"},"hl":[],"dim":[],"focus":[],"arrows":[{"id":"zch7780y","kind":"line","from":{"e":"o5"},"to":{"p":[46,99]},"head":true,"bend":0,"style":"solid","color":"opp","width":3}],"zones":[{"id":"vmusy48y","type":"rect","x":16,"y":46,"w":68,"h":26,"color":"#ff5a4e","label":"бьют издалека","lpos":"top"}],"bubbles":[],"cap":"Блок провалился в штрафную — соперник спокойно бьёт с линии и навешивает.","chapter":"Блок в штрафной","dur":1100,"hold":2000}],"autoplay":false,"loop":false,"still":false,"legend":true}},{"id":"fu6ak4yg","layout":"text","nav":"Команды голосом","title":"Голос — половина схемы","subtitle":"Перестроение работает, только если все слышат, что происходит. Семь коротких команд — одни и те же на каждой игре.","body":"!!Мой!!! :: **Кто выходит на мяч.** Я атакую игрока с мячом — второй не выходит, а страхует.\n!!Сдвиг!!! :: **Центральный защитник.** Блок смещается в сторону мяча.\n!!Пошли!!! :: **Кто отобрал или первым увидел.** Контратака: трое бегут вперёд на ускорении.\n!!Иду!!! :: **Маятник.** Я ухожу в атаку по флангу.\n!!Стою!!! :: **Второй латераль.** Остаюсь сзади третьим защитником.\n!!Держим!!! :: **Игрок с мячом или вратарь.** Контратака не вышла — сохраняем мяч, не рискуем.\n!!Домой!!! :: **Вратарь или защитник.** Потеря — все бегом в блок 4-2-1.","side":"left","board":null},{"id":"rxm8ofwm","layout":"text","nav":"По ситуации","title":"Как меняем игру по ситуации","subtitle":"Модель та же — меняется высота блока и число бегущих в контратаку.","body":"Ведём в счёте :: Блок ещё ниже. В контратаку бегут двое — нападающий и полузащитник, маятник остаётся.\nНичья :: Играем как обычно. Не раскрываемся ради гола — контратака сама даст момент.\nПроигрываем :: Поднимаем блок к центру поля и выходим на мяч раньше. В контратаку — четверо: второй полузащитник тоже бежит. Сзади остаются трое.\nСоперник играет длинными :: Защитники на пару метров глубже, вратарь страхует за спиной, полузащитники подбирают отскоки.\nУ соперника быстрые нападающие :: Опорный не уходит никогда. Латераль бежит в контратаку только после чистого отбора.\nСоперник сам отдаёт мяч :: Можно спокойно владеть в 3-3-1, но правило «сзади трое» остаётся.\nУстали латерали :: Меняем основного латераля. Контратаку чаще ведут нападающий и полузащитник.","side":"left","board":null},{"id":"rvy26mum","layout":"text","nav":"Тренировка","title":"Как отработать на тренировке","subtitle":"Четыре упражнения — от физики к игре. Первое делайте каждую тренировку.","body":"1. **Рывки после разворота** (10 минут). Старт спиной к направлению, разворот по сигналу и ускорение на 20–30 метров. 6–8 повторений с полным отдыхом. В первую очередь — латерали и нападающий.\n2. **Блок против владения** (15 минут). Семь наших против восьми-девяти на одной половине. Соперник катает мяч, наши держат 4-2-1 и выходят только по сигналам. После отбора — пас в мини-ворота на центральной линии за 5 секунд.\n3. **Контратака трое против двоих** (15 минут). Мяч получает наш защитник, трое бегут против двух защитников соперника, догоняющий стартует через 2 секунды. На удар — 10 секунд.\n4. **Стоп-кадр в двусторонке.** По свистку все замирают. Проверяем: во время контратаки сзади четверо? Бежали ровно трое? Маятник вернулся в блок?","side":"left","board":null},{"id":"gtqoblbd","layout":"text","nav":"Шпаргалка","title":"Шпаргалка","subtitle":"Если запомнить только один экран — пусть будет этот.","body":"1. Без мяча — **компактный 4-2-1** на своей половине. Мяч сопернику отдаём, центр и спину — нет.\n2. На мяч выходим только **по сигналу**: фланг, приём спиной, плохой приём.\n3. Отбор — !!Пошли!!! Первый пас — **вперёд**.\n4. Бегут **трое**: латераль фланга отбора, нападающий, ближний полузащитник.\n5. Стоят **четверо**: второй латераль, два центральных, опорный.\n6. **10 секунд** на удар. Не вышло — !!Держим!!!\n7. Потеря — ближний задерживает, остальные !!Домой!!! бегом.","side":"left","board":null}],"id":"lc41xf09"}</script>
+<script>
+(function (root) {
+'use strict';
+const NS = 'http://www.w3.org/2000/svg';
+const REDUCED = !!(root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches);
+let UID = 0;
+
+function S(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  if (attrs) for (const k in attrs) if (attrs[k] != null) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function H(tag, cls, parent, html) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html != null) e.innerHTML = html;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
+const clamp01 = v => (v < 0 ? 0 : v > 1 ? 1 : v);
+const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+function uid() { return Math.random().toString(36).slice(2, 10); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function rgb(c) {
+  let x = String(c || '').trim().replace('#', '');
+  if (x.length === 3 || x.length === 4) x = x.slice(0, 3).split('').map(ch => ch + ch).join('');
+  const n = parseInt(x.slice(0, 6), 16);
+  return isNaN(n) ? [255, 255, 255] : [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+function mix(a, b, t) {
+  const A = rgb(a), B = rgb(b);
+  return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join('');
+}
+function safeColor(c, fb) { return /^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(String(c || '')) ? c : (fb || '#ffffff'); }
+function isWhite(c) { const v = rgb(c); return v[0] > 235 && v[1] > 235 && v[2] > 235; }
+function quadLen(x0, y0, x1, y1, x2, y2) {
+  let L = 0, px = x0, py = y0;
+  for (let i = 1; i <= 16; i++) {
+    const t = i / 16, m = 1 - t;
+    const x = m * m * x0 + 2 * m * t * x1 + t * t * x2, y = m * m * y0 + 2 * m * t * y1 + t * t * y2;
+    L += Math.hypot(x - px, y - py); px = x; py = y;
+  }
+  return L;
+}
+
+/* ---------- Форматы и настройки ---------- */
+const FORMATS = {
+  '5x5': { name: '5×5', n: 5, ratio: 2.0, box: [0.76, 0.15], ga: null, spot: 0.15, circle: 0.15, goal: 0.16, arc: false, round: true },
+  '6x6': { name: '6×6', n: 6, ratio: 1.6, box: [0.62, 0.15], ga: null, spot: 0.12, circle: 0.12, goal: 0.16, arc: false },
+  '7x7': { name: '7×7', n: 7, ratio: 1.55, box: [0.58, 0.15], ga: [0.28, 0.05], spot: 0.11, circle: 0.12, goal: 0.16, arc: true },
+  '8x8': { name: '8×8', n: 8, ratio: 1.5, box: [0.56, 0.16], ga: [0.26, 0.055], spot: 0.11, circle: 0.122, goal: 0.17, arc: true },
+  '9x9': { name: '9×9', n: 9, ratio: 1.5, box: [0.56, 0.16], ga: [0.26, 0.055], spot: 0.11, circle: 0.12, goal: 0.14, arc: true },
+  '11x11': { name: '11×11', n: 11, ratio: 1.54, box: [0.593, 0.157], ga: [0.269, 0.052], spot: 0.105, circle: 0.135, goal: 0.108, arc: true, arcR: 0.135 }
+};
+
+function defaultSettings(format) {
+  return {
+    format: FORMATS[format] ? format : '8x8',
+    pitch: { orientation: 'vertical', view: 'full', ratio: 0, stripes: true, markings: true, grass: '#3a8a55', grass2: '#40925b', surround: '#2f7a4a', lines: '#ffffff' },
+    colors: {
+      ours: '#2456c7', oursText: '#ffffff', oursKeeper: '#f1c232', oursKeeperText: '#1f2a44',
+      opp: '#d8453c', oppText: '#ffffff', oppKeeper: '#9e2f28', oppKeeperText: '#ffffff',
+      third: '#7b8699', thirdText: '#ffffff', thirdKeeper: '#4f596b', thirdKeeperText: '#ffffff',
+      special: '#ff7a00', specialText: '#1f2a44',
+      run: '#ffffff', pass: '#ffe066', oppArrow: '#ff5a4e', ball: '#ffffff'
+    },
+    tokens: { oursSize: 1, oppSize: 0.8, thirdSize: 0.9, oursLabel: 'label', oppLabel: 'none', thirdLabel: 'label', oursShape: 'circle', oppShape: 'circle', thirdShape: 'circle' },
+    legend: { show: true, ours: 'мы', special: 'выделен', opp: 'соперник', third: 'нейтральные', pass: 'пас', run: 'бег', dir: 'auto' },
+    look: { theme: 'board', font: 'sport', accent: '#ff7a00' },
+    anim: { speed: 1, autoplay: true }
+  };
+}
+
+function deepMerge(base, over) {
+  if (Array.isArray(base)) return Array.isArray(over) ? over : base;
+  if (base && typeof base === 'object') {
+    const o = over && typeof over === 'object' && !Array.isArray(over) ? over : {};
+    const out = {};
+    for (const k in base) out[k] = deepMerge(base[k], o[k]);
+    for (const k in o) if (!(k in base)) out[k] = o[k];
+    return out;
+  }
+  if (over === undefined || over === null) return base;
+  if (typeof base === 'number') { const n = +over; return isNaN(n) ? base : n; }
+  if (typeof base === 'boolean') return !!over;
+  return over;
+}
+
+function newFrame() {
+  return { id: uid(), pos: {}, ball: null, hl: [], dim: [], focus: [], arrows: [], zones: [], bubbles: [], cap: '', chapter: '', dur: 1100, hold: 2000 };
+}
+
+function normalizeBoard(b) {
+  if (!Array.isArray(b.entities)) b.entities = [];
+  b.entities = b.entities.filter(e => e && typeof e === 'object');
+  b.entities.forEach(e => {
+    e.id = String(e.id || uid());
+    e.kind = e.kind || 'ours';
+    if (e.label == null) e.label = '';
+    if (e.number == null) e.number = '';
+  });
+  if (!Array.isArray(b.frames) || !b.frames.length) b.frames = [newFrame()];
+  b.frames.forEach(f => {
+    f.id = f.id || uid();
+    if (!f.pos || typeof f.pos !== 'object') f.pos = {};
+    ['arrows', 'zones', 'bubbles', 'hl', 'dim', 'focus'].forEach(k => { if (!Array.isArray(f[k])) f[k] = []; });
+    if (f.ball === undefined) f.ball = null;
+    if (typeof f.cap !== 'string') f.cap = '';
+    if (typeof f.chapter !== 'string') f.chapter = '';
+    f.dur = +f.dur || 1100;
+    f.hold = +f.hold || 2000;
+  });
+  if (b.autoplay === undefined) b.autoplay = true;
+  if (b.loop === undefined) b.loop = false;
+  if (b.legend === undefined) b.legend = true;
+  if (b.still === undefined) b.still = false;
+  return b;
+}
+
+function normalizeProject(p) {
+  p = p && typeof p === 'object' ? p : {};
+  const fmt = (p.settings && p.settings.format) || '8x8';
+  p.settings = deepMerge(defaultSettings(fmt), p.settings || {});
+  if (!FORMATS[p.settings.format]) p.settings.format = '8x8';
+  p.title = typeof p.title === 'string' ? p.title : 'Презентация';
+  p.id = String(p.id || uid());
+  if (!Array.isArray(p.slides)) p.slides = [];
+  p.slides = p.slides.filter(s => s && typeof s === 'object');
+  p.slides.forEach(s => {
+    s.id = String(s.id || uid());
+    ['title', 'subtitle', 'body', 'nav'].forEach(k => { if (typeof s[k] !== 'string') s[k] = ''; });
+    if (!s.board || typeof s.board !== 'object') s.board = null;
+    if (['split', 'board', 'text', 'title'].indexOf(s.layout) < 0) s.layout = s.board ? 'split' : 'text';
+    s.side = s.side === 'right' ? 'right' : 'left';
+    if (s.board) normalizeBoard(s.board);
+  });
+  return p;
+}
+
+/* ---------- Текст: лёгкая разметка ---------- */
+function inline(s) {
+  let t = esc(s);
+  t = t.replace(/!!([^!\n]+?!?)!!/g, '<span class="te-shout">$1</span>');
+  t = t.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  t = t.replace(/(^|[^*\w])\*(?!\s)([^*]+?)\*(?!\*)/g, '$1<i>$2</i>');
+  t = t.replace(/\{(#[0-9a-fA-F]{3,8})\s+([^{}]+)\}/g, '<span style="color:$1">$2</span>');
+  return t;
+}
+function plain(s) {
+  return String(s || '').replace(/\*\*|!!|\*/g, '').replace(/\{#[0-9a-fA-F]{3,8}\s+([^{}]+)\}/g, '$1');
+}
+const RX_BLOCK = /^(#{1,3}\s|\s*[-*•]\s|\s*\d+[.)]\s|\s*>)/;
+function mdBlock(src) {
+  const lines = src.split('\n');
+  let out = '', i = 0;
+  while (i < lines.length) {
+    const L = lines[i];
+    if (!L.trim()) { i++; continue; }
+    let m;
+    if ((m = L.match(/^#{1,3}\s+(.*)$/))) { out += `<h3>${inline(m[1])}</h3>`; i++; continue; }
+    if (/^\s*[-*•]\s+/.test(L)) {
+      let items = '';
+      while (i < lines.length && /^\s*[-*•]\s+/.test(lines[i])) { items += `<li>${inline(lines[i].replace(/^\s*[-*•]\s+/, ''))}</li>`; i++; }
+      out += `<ul class="te-list">${items}</ul>`; continue;
+    }
+    if (/^\s*\d+[.)]\s+/.test(L)) {
+      let items = '';
+      while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])) { items += `<li><span>${inline(lines[i].replace(/^\s*\d+[.)]\s+/, ''))}</span></li>`; i++; }
+      out += `<ol class="te-steps">${items}</ol>`; continue;
+    }
+    if (/^\s*>/.test(L)) {
+      const t = [];
+      while (i < lines.length && /^\s*>/.test(lines[i])) { t.push(inline(lines[i].replace(/^\s*>\s?/, ''))); i++; }
+      out += `<p class="te-callout">${t.join('<br>')}</p>`; continue;
+    }
+    if (L.indexOf('::') >= 0) {
+      let rows = '';
+      while (i < lines.length && lines[i].trim() && lines[i].indexOf('::') >= 0) {
+        const parts = lines[i].split('::');
+        rows += `<div><dt>${inline(parts[0].trim())}</dt><dd>${inline(parts.slice(1).join('::').trim())}</dd></div>`;
+        i++;
+      }
+      out += `<dl class="te-dl">${rows}</dl>`; continue;
+    }
+    const t = [];
+    while (i < lines.length && lines[i].trim() && !RX_BLOCK.test(lines[i]) && lines[i].indexOf('::') < 0) { t.push(inline(lines[i])); i++; }
+    if (!t.length) { t.push(inline(lines[i])); i++; }
+    out += `<p>${t.join('<br>')}</p>`;
+  }
+  return out;
+}
+function md(text) {
+  const src = String(text || '').replace(/\r/g, '');
+  const cols = src.split(/^\s*\|\|\s*$/m);
+  if (cols.length > 1) return '<div class="te-cols">' + cols.map(c => '<div>' + mdBlock(c) + '</div>').join('') + '</div>';
+  return mdBlock(src);
+}
+
+/* ---------- Главы ---------- */
+function computeChapters(frames) {
+  const idx = [];
+  frames.forEach((f, i) => { if (i === 0 || (f.chapter && f.chapter.trim())) idx.push(i); });
+  if (idx.length <= 1) return null;
+  return idx.map((from, k) => ({
+    name: (frames[from].chapter || '').trim() || 'Часть ' + (k + 1),
+    from,
+    to: k + 1 < idx.length ? idx[k + 1] - 1 : frames.length - 1
+  }));
+}
+
+/* ---------- Геометрия и поле ---------- */
+function makeGeo(st) {
+  const f = FORMATS[st.format] || FORMATS['8x8'];
+  const ratio = +st.pitch.ratio > 0.5 ? +st.pitch.ratio : f.ratio;
+  const MG = 20, PW = 360, PL = Math.round(PW * ratio);
+  const horiz = st.pitch.orientation === 'horizontal';
+  const VW = horiz ? PL + 2 * MG : PW + 2 * MG;
+  const VH = horiz ? PW + 2 * MG : PL + 2 * MG;
+  const pt = horiz
+    ? (x, y) => [MG + (100 - y) * PL / 100, MG + x * PW / 100]
+    : (x, y) => [MG + x * PW / 100, MG + y * PL / 100];
+  const inv = horiz
+    ? (sx, sy) => [(sy - MG) * 100 / PW, 100 - (sx - MG) * 100 / PL]
+    : (sx, sy) => [(sx - MG) * 100 / PW, (sy - MG) * 100 / PL];
+  let vb = [0, 0, VW, VH];
+  const cut = MG + PL * 0.44;
+  if (st.pitch.view === 'attack') vb = horiz ? [cut, 0, VW - cut, VH] : [0, 0, VW, VH - cut];
+  else if (st.pitch.view === 'defence') vb = horiz ? [0, 0, VW - cut, VH] : [0, cut, VW, VH - cut];
+  return { f, ratio, MG, PW, PL, horiz, VW, VH, vb, pt, inv };
+}
+
+function drawPitch(svg, geo, st, id) {
+  const defs = S('defs', null, svg);
+  const vg = S('radialGradient', { id: id + '-vg', cx: '50%', cy: '50%', r: '72%' }, defs);
+  S('stop', { offset: '55%', 'stop-color': '#062a14', 'stop-opacity': '0' }, vg);
+  S('stop', { offset: '100%', 'stop-color': '#062a14', 'stop-opacity': '.3' }, vg);
+  const pc = st.pitch, f = geo.f, PW = geo.PW, PL = geo.PL, MG = geo.MG;
+  S('rect', { x: 0, y: 0, width: geo.VW, height: geo.VH, fill: safeColor(pc.surround, '#2f7a4a') }, svg);
+  const g = S('g', { transform: geo.horiz ? `matrix(0,1,-1,0,${MG + PL},${MG})` : `translate(${MG},${MG})` }, svg);
+  const n = pc.stripes ? 12 : 1;
+  for (let i = 0; i < n; i++) S('rect', { x: 0, y: i * PL / n, width: PW, height: PL / n + 0.6, fill: safeColor(i % 2 ? pc.grass : pc.grass2, '#3a8a55') }, g);
+  S('rect', { x: 0, y: 0, width: PW, height: PL, fill: `url(#${id}-vg)` }, g);
+  if (!pc.markings) return defs;
+  const lc = safeColor(pc.lines, '#ffffff');
+  const A = o => Object.assign(o, { fill: 'none', stroke: lc, 'stroke-opacity': 0.82, 'stroke-width': 2.2 });
+  S('rect', A({ x: 0, y: 0, width: PW, height: PL }), g);
+  S('line', A({ x1: 0, y1: PL / 2, x2: PW, y2: PL / 2 }), g);
+  S('circle', A({ cx: PW / 2, cy: PL / 2, r: f.circle * PW }), g);
+  S('circle', { cx: PW / 2, cy: PL / 2, r: 3, fill: lc, 'fill-opacity': 0.85 }, g);
+  [0, 1].forEach(bottom => {
+    const y0 = bottom ? PL : 0, d = bottom ? -1 : 1;
+    const bw = f.box[0] * PW, bh = f.box[1] * PL;
+    if (f.round) {
+      const r = Math.min(bh, bw / 3), x0 = PW / 2 - bw / 2, x1 = PW / 2 + bw / 2, ye = y0 + d * bh;
+      S('path', A({ d: `M${x0},${y0} L${x0},${ye - d * r} Q${x0},${ye} ${x0 + r},${ye} L${x1 - r},${ye} Q${x1},${ye} ${x1},${ye - d * r} L${x1},${y0}` }), g);
+    } else {
+      S('rect', A({ x: PW / 2 - bw / 2, y: bottom ? y0 - bh : y0, width: bw, height: bh }), g);
+    }
+    if (f.ga) { const gw = f.ga[0] * PW, gh = f.ga[1] * PL; S('rect', A({ x: PW / 2 - gw / 2, y: bottom ? y0 - gh : y0, width: gw, height: gh }), g); }
+    const sy = y0 + d * f.spot * PL;
+    S('circle', { cx: PW / 2, cy: sy, r: 2.6, fill: lc, 'fill-opacity': 0.85 }, g);
+    if (f.arc) {
+      const ey = y0 + d * bh, r = (f.arcR || f.circle * 0.87) * PW, dy = Math.abs(ey - sy);
+      if (dy < r) { const hc = Math.sqrt(r * r - dy * dy); S('path', A({ d: `M${PW / 2 - hc},${ey} A${r},${r} 0 0 ${bottom ? 1 : 0} ${PW / 2 + hc},${ey}` }), g); }
+    }
+    const gwid = f.goal * PW;
+    S('rect', { x: PW / 2 - gwid / 2, y: bottom ? y0 : y0 - 10, width: gwid, height: 10, fill: 'rgba(255,255,255,.18)', stroke: lc, 'stroke-opacity': 0.9, 'stroke-width': 2 }, g);
+  });
+  return defs;
+}
+
+/* ---------- Фишки ---------- */
+const TEAMS = { ours: 1, opp: 1, third: 1 };
+const EQUIP_COLOR = { cone: '#ff8a1a', disc: '#ffd23f', pole: '#ffd23f', minigoal: '#ffffff', ball: '#ffffff', dummy: '#1f2a44' };
+const isPlayer = e => !!(e && TEAMS[e.kind]);
+function entRadius(st, e) {
+  if (!isPlayer(e)) return 12 * (+e.size || 1);
+  return 15 * (+st.tokens[e.kind + 'Size'] || 1) * (+e.size || 1);
+}
+function entColors(st, e) {
+  if (!isPlayer(e)) return { fill: safeColor(e.color, EQUIP_COLOR[e.kind] || '#ffffff'), text: '#ffffff' };
+  const C = st.colors, k = e.kind;
+  return {
+    fill: safeColor(e.color || (e.gk ? C[k + 'Keeper'] : C[k]), '#2456c7'),
+    text: safeColor(e.textColor || (e.gk ? C[k + 'KeeperText'] : C[k + 'Text']), '#ffffff')
+  };
+}
+function entLabel(st, e) {
+  if (!isPlayer(e)) return '';
+  const mode = st.tokens[e.kind + 'Label'];
+  if (mode === 'none') return '';
+  if (mode === 'number') return String(e.number || e.label || '');
+  return String(e.label || e.number || '');
+}
+function shapeEl(g, shape, R) {
+  switch (shape) {
+    case 'square': return S('rect', { x: -R * 0.92, y: -R * 0.92, width: R * 1.84, height: R * 1.84, rx: R * 0.28 }, g);
+    case 'triangle': return S('path', { d: `M0,${-R * 1.15} L${R * 1.1},${R * 0.8} L${-R * 1.1},${R * 0.8} Z`, 'stroke-linejoin': 'round' }, g);
+    case 'diamond': return S('path', { d: `M0,${-R * 1.2} L${R * 1.2},0 L0,${R * 1.2} L${-R * 1.2},0 Z`, 'stroke-linejoin': 'round' }, g);
+    case 'shirt': {
+      const s = R * 1.08;
+      return S('path', { d: `M${-0.42 * s},${-0.95 * s} Q0,${-0.62 * s} ${0.42 * s},${-0.95 * s} L${s},${-0.55 * s} L${0.72 * s},${-0.12 * s} L${0.52 * s},${-0.28 * s} L${0.52 * s},${0.95 * s} L${-0.52 * s},${0.95 * s} L${-0.52 * s},${-0.28 * s} L${-0.72 * s},${-0.12 * s} L${-s},${-0.55 * s} Z`, 'stroke-linejoin': 'round' }, g);
+    }
+    default: return S('circle', { r: R }, g);
+  }
+}
+function drawEntity(g, e, st, editor) {
+  const parts = {};
+  if (isPlayer(e)) {
+    const R = entRadius(st, e);
+    parts.R = R;
+    if (editor) S('circle', { r: R + 9, fill: 'transparent' }, g);
+    const col = entColors(st, e);
+    const shape = e.shape || st.tokens[e.kind + 'Shape'] || 'circle';
+    S('ellipse', { cx: 1.5, cy: R - 3, rx: R, ry: 5, class: 'te-shadow' }, g);
+    parts.halo = S('circle', { r: R + 2, class: 'te-halo' }, g);
+    parts.body = shapeEl(g, shape, R);
+    parts.body.setAttribute('class', 'te-tb');
+    parts.body.style.fill = col.fill;
+    parts.fill = col.fill; parts.text = col.text;
+    const lab = entLabel(st, e);
+    if (lab) {
+      const fs = R * (lab.length >= 4 ? 0.56 : lab.length === 3 ? 0.7 : 0.84);
+      parts.label = S('text', { class: 'te-lbl', 'text-anchor': 'middle', dy: '.36em', y: shape === 'triangle' ? (R * 0.22).toFixed(1) : null, 'font-size': fs.toFixed(1) }, g);
+      parts.label.style.fill = col.text;
+      parts.label.textContent = lab;
+    }
+  } else {
+    const s = +e.size || 1, c = safeColor(e.color, EQUIP_COLOR[e.kind] || '#ffffff');
+    parts.R = 12 * s;
+    if (editor) S('circle', { r: 20 * s, fill: 'transparent' }, g);
+    parts.halo = S('circle', { r: 16 * s, class: 'te-halo' }, g);
+    const eg = S('g', { transform: `scale(${s})` }, g);
+    if (e.kind === 'cone') {
+      S('ellipse', { cx: 0, cy: 7, rx: 10, ry: 3.2, fill: 'rgba(0,0,0,.3)' }, eg);
+      S('path', { d: 'M0,-12 L8,7 L-8,7 Z', fill: c, stroke: 'rgba(0,0,0,.35)', 'stroke-width': 1, 'stroke-linejoin': 'round' }, eg);
+      S('path', { d: 'M-4.2,-2 L4.2,-2', stroke: '#fff', 'stroke-width': 2.4 }, eg);
+    } else if (e.kind === 'disc') {
+      S('ellipse', { cx: 0, cy: 1.6, rx: 10, ry: 5, fill: 'rgba(0,0,0,.25)' }, eg);
+      S('ellipse', { cx: 0, cy: 0, rx: 10, ry: 5, fill: c, stroke: 'rgba(0,0,0,.3)', 'stroke-width': 1 }, eg);
+      S('ellipse', { cx: 0, cy: -0.5, rx: 4, ry: 2, fill: 'rgba(0,0,0,.22)' }, eg);
+    } else if (e.kind === 'pole') {
+      S('ellipse', { cx: 1, cy: 3, rx: 6, ry: 2.5, fill: 'rgba(0,0,0,.3)' }, eg);
+      S('rect', { x: -2, y: -24, width: 4, height: 26, rx: 2, fill: c, stroke: 'rgba(0,0,0,.35)', 'stroke-width': 1 }, eg);
+      S('circle', { cx: 0, cy: 2, r: 4, fill: '#333' }, eg);
+    } else if (e.kind === 'minigoal') {
+      S('rect', { x: -20, y: -7, width: 40, height: 10, fill: 'rgba(255,255,255,.18)', stroke: c, 'stroke-width': 2.6 }, eg);
+      for (let x = -14; x <= 14; x += 7) S('line', { x1: x, y1: -7, x2: x, y2: 3, stroke: 'rgba(255,255,255,.45)', 'stroke-width': 1 }, eg);
+    } else if (e.kind === 'dummy') {
+      S('ellipse', { cx: 1, cy: 12, rx: 9, ry: 3, fill: 'rgba(0,0,0,.3)' }, eg);
+      S('path', { d: 'M-7,12 L-7,-6 Q-7,-10 -3,-10 L3,-10 Q7,-10 7,-6 L7,12 Z', fill: c, stroke: '#fff', 'stroke-width': 1.5 }, eg);
+      S('circle', { cx: 0, cy: -15, r: 4.5, fill: c, stroke: '#fff', 'stroke-width': 1.5 }, eg);
+    } else {
+      S('ellipse', { cx: 1.5, cy: 5, rx: 6, ry: 2.6, fill: 'rgba(0,0,0,.3)' }, eg);
+      S('circle', { r: 6.5, fill: c, stroke: '#15251c', 'stroke-width': 1.6 }, eg);
+      S('path', { d: 'M0,-3.2 L3,-1 L1.9,2.6 L-1.9,2.6 L-3,-1 z', fill: '#15251c' }, eg);
+    }
+  }
+  return parts;
+}
+
+function legendRow(st, board) {
+  const kinds = {};
+  board.entities.forEach(e => { kinds[e.kind] = 1; });
+  const anyHl = board.frames.some(f => f.hl && f.hl.length);
+  const arrows = [].concat(...board.frames.map(f => f.arrows || []));
+  const anyPass = arrows.some(a => (a.style || 'solid') === 'solid' && a.head !== false);
+  const anyRun = arrows.some(a => a.style === 'dashed');
+  const L = st.legend, C = st.colors;
+  const dot = (c, t) => `<span><i style="background:${safeColor(c)}"></i>${esc(t)}</span>`;
+  let html = '';
+  if (kinds.ours && L.ours) html += dot(C.ours, L.ours);
+  if (anyHl && L.special) html += dot(C.special, L.special);
+  if (kinds.opp && L.opp) html += dot(C.opp, L.opp);
+  if (kinds.third && L.third) html += dot(C.third, L.third);
+  if (anyPass && L.pass) html += `<span><svg width="24" height="8" aria-hidden="true"><path d="M1 4h22" stroke="${mix(safeColor(C.pass), '#000000', 0.28)}" stroke-width="3"/></svg>${esc(L.pass)}</span>`;
+  if (anyRun && L.run) html += `<span><svg width="24" height="8" aria-hidden="true"><path d="M1 4h22" stroke="currentColor" stroke-width="2.4" stroke-dasharray="5 4"/></svg>${esc(L.run)}</span>`;
+  const dir = L.dir === 'auto' ? (st.pitch.orientation === 'horizontal' ? 'атакуем вправо →' : 'атакуем вверх ↑') : L.dir;
+  if (dir) html += `<span>${esc(dir)}</span>`;
+  if (!html) return null;
+  const k = document.createElement('div');
+  k.className = 'te-keys';
+  k.innerHTML = html;
+  return k;
+}
+
+function wavyPath(x0, y0, x1, y1, x2, y2) {
+  const L = quadLen(x0, y0, x1, y1, x2, y2), N = Math.max(12, Math.round(L / 2.5));
+  let out = '', acc = 0, px = x0, py = y0;
+  for (let i = 0; i <= N; i++) {
+    const t = i / N, m = 1 - t;
+    const x = m * m * x0 + 2 * m * t * x1 + t * t * x2, y = m * m * y0 + 2 * m * t * y1 + t * t * y2;
+    const tx = 2 * m * (x1 - x0) + 2 * t * (x2 - x1), ty = 2 * m * (y1 - y0) + 2 * t * (y2 - y1), tl = Math.hypot(tx, ty) || 1;
+    if (i) acc += Math.hypot(x - px, y - py);
+    px = x; py = y;
+    const taper = Math.max(0, Math.min(1, acc / 10, (L - acc) / 14));
+    const off = Math.sin(acc / 16 * Math.PI * 2) * 4 * taper;
+    out += (i ? 'L' : 'M') + (x - ty / tl * off).toFixed(1) + ',' + (y + tx / tl * off).toFixed(1);
+  }
+  return out;
+}
+
+/* ---------- Доска ---------- */
+const ICON = {
+  play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" fill="currentColor"/></svg>',
+  back: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  fwd: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  restart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.6 12a7.4 7.4 0 1 0 2.3-5.4M4.6 4v4.2h4.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  fs: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+const noteColor = c => (isWhite(c) ? '#ffffff' : mix(c, '#ffffff', 0.55));
+
+class Board {
+  constructor(host, board, project, opts) {
+    opts = opts || {};
+    this.P = project;
+    this.st = project.settings;
+    this.B = board;
+    this.F = board.frames;
+    this.n = this.F.length;
+    this.opts = opts;
+    this.editor = !!opts.editor;
+    this.geo = makeGeo(this.st);
+    this.speed = Math.max(0.25, +this.st.anim.speed || 1);
+    this.E = {};
+    board.entities.forEach(e => { this.E[e.id] = e; });
+    this.gen = 0; this.i = 0; this.cur = {}; this.ballXY = null; this.ballOwner = null;
+    this.dyn = []; this.ageo = []; this.playing = false;
+    this.chapters = computeChapters(this.F);
+    this.id = 'teb' + (++UID) + uid().slice(0, 3);
+    this.ar = this.geo.vb[2] / this.geo.vb[3];
+    let pitchHost = host;
+    if (!this.editor && !opts.bare) {
+      host.style.setProperty('--ar', this.ar.toFixed(4));
+      host.style.setProperty('--te-maxw', this.ar > 1 ? '56vw' : '640px');
+      if (board.legend !== false && this.st.legend.show) {
+        const lg = legendRow(this.st, board);
+        if (lg) host.appendChild(lg);
+      }
+      const fr = H('div', 'te-board', host);
+      pitchHost = H('div', 'te-pitch', fr);
+    }
+    this.svg = S('svg', { viewBox: this.geo.vb.join(' '), class: 'te-svg' + (this.editor ? ' te-static' : ''), role: 'img', 'aria-label': board.aria || 'Тактическая схема' }, pitchHost);
+    this.defs = drawPitch(this.svg, this.geo, this.st, this.id);
+    this.markers = {};
+    this.gZ = S('g', null, this.svg);
+    this.gA = S('g', null, this.svg);
+    this.gT = S('g', null, this.svg);
+    this.gBall = S('g', { class: 'te-ball gone', 'data-ball': '1' }, this.svg);
+    this.gB = S('g', null, this.svg);
+    if (this.editor) this.gO = S('g', { class: 'te-over' }, this.svg);
+    this.tok = {}; this.parts = {};
+    const rank = e => (isPlayer(e) ? (e.kind === 'ours' ? 3 : e.kind === 'third' ? 2 : 1) : 0);
+    board.entities.slice().sort((a, b) => rank(a) - rank(b)).forEach(e => {
+      const g = S('g', { class: 'te-tok gone', 'data-eid': e.id }, this.gT);
+      this.parts[e.id] = drawEntity(S('g', null, g), e, this.st, this.editor);
+      this.tok[e.id] = g;
+    });
+    const bi = S('g', null, this.gBall);
+    if (this.editor) S('circle', { r: 16, fill: 'transparent' }, bi);
+    S('ellipse', { cx: 1.5, cy: 5, rx: 6, ry: 2.6, fill: 'rgba(0,0,0,.3)' }, bi);
+    S('circle', { r: 6.5, fill: safeColor(this.st.colors.ball), stroke: '#15251c', 'stroke-width': 1.6 }, bi);
+    S('path', { d: 'M0,-3.2 L3,-1 L1.9,2.6 L-1.9,2.6 L-3,-1 z', fill: '#15251c' }, bi);
+    if (opts.uiHost && this.n > 1 && !board.still) this.buildUI(opts.uiHost);
+    this._snap(Math.max(0, Math.min(opts.frame || 0, this.n - 1)));
+  }
+
+  radius(id) { const p = this.parts[id]; return p ? p.R : 12; }
+  isChapterStart(i) { return !!(this.chapters && i > 0 && this.chapters.some(c => c.from === i)); }
+
+  resolve(i) {
+    const f = this.F[i] || newFrame();
+    const P = {};
+    for (const id in f.pos) if (f.pos[id] && this.tok[id]) P[id] = f.pos[id];
+    return { f, P, ball: f.ball || null, hl: f.hl || [], dim: f.dim || [], focus: f.focus || [] };
+  }
+
+  applyClasses(st) {
+    const sp = safeColor(this.st.colors.special, '#ff7a00'), spt = safeColor(this.st.colors.specialText, '#1f2a44');
+    for (const id in this.tok) {
+      const c = this.tok[id].classList, p = this.parts[id];
+      const hl = st.hl.indexOf(id) >= 0, fo = st.focus.indexOf(id) >= 0;
+      c.toggle('gone', !st.P[id]);
+      c.toggle('dim', st.dim.indexOf(id) >= 0);
+      c.toggle('hl', hl);
+      c.toggle('focus', fo && !hl);
+      if (p.body) p.body.style.fill = hl ? sp : p.fill;
+      if (p.label) p.label.style.fill = hl ? spt : p.text;
+      if (p.halo) p.halo.style.stroke = hl ? sp : fo ? '#ffffff' : 'none';
+    }
+  }
+
+  place() {
+    for (const id in this.cur) {
+      const p = this.cur[id], s = this.geo.pt(p[0], p[1]), e = this.E[id];
+      const rot = e && !isPlayer(e) && +e.rot ? ` rotate(${+e.rot})` : '';
+      this.tok[id].setAttribute('transform', `translate(${s[0].toFixed(1)},${s[1].toFixed(1)})${rot}`);
+    }
+  }
+
+  ballPt(b) {
+    if (!b) return null;
+    if (b.owner) {
+      const p = this.cur[b.owner];
+      if (!p) return null;
+      const s = this.geo.pt(p[0], p[1]), o = this.radius(b.owner) * 0.82 + 1;
+      return [s[0] + o, s[1] + o];
+    }
+    if (Array.isArray(b.at)) return this.geo.pt(b.at[0], b.at[1]);
+    return null;
+  }
+
+  setBall(b, fromXY, same, k) {
+    const end = this.ballPt(b);
+    if (!end) { this.gBall.classList.add('gone'); this.ballXY = null; return; }
+    this.gBall.classList.remove('gone');
+    const p = (!fromXY || same) ? end : [fromXY[0] + (end[0] - fromXY[0]) * k, fromXY[1] + (end[1] - fromXY[1]) * k];
+    this.ballXY = p;
+    this.gBall.setAttribute('transform', `translate(${p[0].toFixed(1)},${p[1].toFixed(1)})`);
+  }
+
+  marker(color, w) {
+    const size = Math.round(8 + w * 1.1);
+    const key = color.replace(/[^a-z0-9]/gi, '').toLowerCase() + 's' + size;
+    if (!this.markers[key]) {
+      const id = `${this.id}-m${key}`;
+      const m = S('marker', { id, viewBox: '0 0 10 10', refX: '6', refY: '5', markerWidth: size, markerHeight: size, markerUnits: 'userSpaceOnUse', orient: 'auto' }, this.defs);
+      S('path', { d: 'M0,0.5 L10,5 L0,9.5 L2.6,5 z', fill: color }, m);
+      this.markers[key] = id;
+    }
+    return `url(#${this.markers[key]})`;
+  }
+
+  arrowColor(a, st) {
+    const C = this.st.colors, c = a.color || 'run';
+    if (c === 'auto') {
+      const id = a.kind === 'move' ? a.target : (a.from && a.from.e);
+      if (id && st.hl.indexOf(id) >= 0) return C.special;
+      const e = id && this.E[id];
+      return e && e.kind === 'opp' ? C.oppArrow : C.run;
+    }
+    if (c === 'run') return C.run;
+    if (c === 'pass') return C.pass;
+    if (c === 'opp') return C.oppArrow;
+    if (c === 'special') return C.special;
+    return c;
+  }
+
+  drawArrows(f, from, to, st, animated) {
+    this.gA.textContent = '';
+    this.ageo = [];
+    (f.arrows || []).forEach((a, idx) => {
+      let A = null, B = null, rA = 0, rB = 0;
+      if (a.kind === 'move') {
+        A = from[a.target]; B = to[a.target];
+        rA = rB = this.radius(a.target) + 2;
+      } else {
+        if (a.from && a.from.e) { A = from[a.from.e]; rA = this.radius(a.from.e) + 2; } else if (a.from && a.from.p) A = a.from.p;
+        if (a.to && a.to.e) { B = to[a.to.e]; rB = this.radius(a.to.e) + 2; } else if (a.to && a.to.p) B = a.to.p;
+      }
+      if (!A || !B) return;
+      const head = a.head !== false;
+      if (!rB && head) rB = 3;
+      const P0 = this.geo.pt(A[0], A[1]), P1 = this.geo.pt(B[0], B[1]);
+      const dx = P1[0] - P0[0], dy = P1[1] - P0[1], len = Math.hypot(dx, dy);
+      if (len < rA + rB + (this.editor ? 4 : 16)) return;
+      const ux = dx / len, uy = dy / len;
+      const sx = P0[0] + ux * rA, sy = P0[1] + uy * rA, ex = P1[0] - ux * rB, ey = P1[1] - uy * rB;
+      const bend = +a.bend || 0;
+      const cx = (sx + ex) / 2 - uy * bend, cy = (sy + ey) / 2 + ux * bend;
+      this.ageo[idx] = { sx, sy, cx, cy, ex, ey };
+      const col = safeColor(this.arrowColor(a, st));
+      const w = Math.max(0.5, +a.width || 3);
+      const style = a.style || 'solid';
+      const d = style === 'wavy' ? wavyPath(sx, sy, cx, cy, ex, ey) : `M${sx.toFixed(1)},${sy.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`;
+      const g = S('g', { class: 'te-arrow' }, this.gA);
+      const p = S('path', { d, fill: 'none', stroke: col, 'stroke-width': w, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-opacity': a.opacity != null ? a.opacity : null }, g);
+      const mk = () => { if (head) p.setAttribute('marker-end', this.marker(col, w)); };
+      if (style === 'dashed' || style === 'dotted') {
+        p.setAttribute('stroke-dasharray', style === 'dotted' ? '0.5 7' : '8 7');
+        p.setAttribute('class', 'te-dash');
+        mk();
+      } else if (!animated || REDUCED || style === 'wavy' || a.draw === false) {
+        mk();
+      } else {
+        const L = quadLen(sx, sy, cx, cy, ex, ey);
+        p.style.strokeDasharray = L;
+        p.style.strokeDashoffset = L;
+        p.getBoundingClientRect();
+        p.style.transition = `stroke-dashoffset ${(0.45 / this.speed).toFixed(2)}s ease-out`;
+        p.style.strokeDashoffset = 0;
+        setTimeout(mk, 360 / this.speed);
+      }
+      if (this.editor) S('path', { d, fill: 'none', stroke: 'transparent', 'stroke-width': 22, 'data-aidx': idx }, g);
+    });
+  }
+
+  note(parent, x, y, text, color, size) {
+    const g = S('g', { transform: `translate(${(+x).toFixed(1)},${(+y).toFixed(1)})` }, parent);
+    const t = S('text', { class: 'te-note', 'text-anchor': 'middle', dy: '.32em', fill: color, 'font-size': +size || 22 }, g);
+    t.textContent = text;
+    return g;
+  }
+
+  drawZones(f) {
+    this.gZ.textContent = '';
+    this.dyn = [];
+    const geo = this.geo;
+    (f.zones || []).forEach((z, idx) => {
+      const col = safeColor(z.color || '#ffffff');
+      const g = S('g', { class: 'te-zone', 'data-zidx': this.editor ? idx : null }, this.gZ);
+      const fo = z.fill != null && z.fill !== '' ? +z.fill : (isWhite(col) ? 0.13 : 0.22);
+      const stroke = z.stroke === 'none' ? { stroke: 'none' } : { stroke: col, 'stroke-opacity': 0.9, 'stroke-width': 2, 'stroke-dasharray': z.stroke === 'solid' ? null : '7 6' };
+      const nc = noteColor(col);
+      if (z.type === 'rect') {
+        const a = geo.pt(+z.x || 0, +z.y || 0), b = geo.pt((+z.x || 0) + (+z.w || 0), (+z.y || 0) + (+z.h || 0));
+        const x = Math.min(a[0], b[0]), y = Math.min(a[1], b[1]), w = Math.abs(a[0] - b[0]), hh = Math.abs(a[1] - b[1]);
+        S('rect', Object.assign({ x, y, width: w, height: hh, rx: Math.min(14, w / 4, hh / 4), fill: col, 'fill-opacity': fo }, stroke), g);
+        if (z.label) {
+          const ly = z.lpos === 'bottom' ? y + hh - 20 : z.lpos === 'center' ? y + hh / 2 : y + 20;
+          this.note(g, x + w / 2, ly, z.label, nc, z.size);
+        }
+      } else if (z.type === 'ellipse') {
+        const c = geo.pt(+z.cx || 0, +z.cy || 0);
+        const rx = Math.abs(geo.horiz ? z.ry * geo.PL / 100 : z.rx * geo.PW / 100);
+        const ry = Math.abs(geo.horiz ? z.rx * geo.PW / 100 : z.ry * geo.PL / 100);
+        S('ellipse', Object.assign({ cx: c[0], cy: c[1], rx, ry, fill: col, 'fill-opacity': fo }, stroke), g);
+        if (z.label) this.note(g, c[0], z.lpos === 'center' ? c[1] : z.lpos === 'top' ? c[1] - ry - 14 : c[1] + ry + 16, z.label, nc, z.size);
+      } else if (z.type === 'text') {
+        const c = geo.pt(+z.x || 0, +z.y || 0);
+        const cls = 'te-note' + (z.font === 'head' ? ' te-note-head' : z.font === 'body' ? ' te-note-body' : '') + (z.outline === false ? ' te-note-plain' : '');
+        const t = S('text', { x: c[0].toFixed(1), y: c[1].toFixed(1), dy: '.32em', 'text-anchor': 'middle', class: cls, fill: col, 'font-size': +z.size || 22 }, g);
+        t.textContent = z.text || '';
+      } else if (z.type === 'hull') {
+        const r = S('rect', Object.assign({ rx: 26, fill: col, 'fill-opacity': z.fill != null && z.fill !== '' ? fo : 0.1 }, stroke), g);
+        const lab = z.label ? S('g', null, g) : null;
+        if (lab) { const t = S('text', { class: 'te-note', 'text-anchor': 'start', dy: '.32em', fill: nc, 'font-size': +z.size || 22 }, lab); t.textContent = z.label; }
+        this.dyn.push(() => {
+          const pts = (z.ids || []).map(id => this.cur[id]).filter(Boolean);
+          if (!pts.length) { g.setAttribute('visibility', 'hidden'); return; }
+          g.removeAttribute('visibility');
+          let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+          pts.forEach(p => { const s = geo.pt(p[0], p[1]); x0 = Math.min(x0, s[0]); y0 = Math.min(y0, s[1]); x1 = Math.max(x1, s[0]); y1 = Math.max(y1, s[1]); });
+          const pad = 26;
+          r.setAttribute('x', (x0 - pad).toFixed(1)); r.setAttribute('y', (y0 - pad).toFixed(1));
+          r.setAttribute('width', (x1 - x0 + 2 * pad).toFixed(1)); r.setAttribute('height', (y1 - y0 + 2 * pad).toFixed(1));
+          if (lab) lab.setAttribute('transform', `translate(${(x0 - pad + 8).toFixed(1)},${(y0 - pad - 13).toFixed(1)})`);
+        });
+      } else if (z.type === 'link') {
+        const pl = S('polyline', { fill: 'none', stroke: col, 'stroke-opacity': 0.85, 'stroke-width': +z.width || 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g);
+        if (this.editor) S('polyline', { fill: 'none', stroke: 'transparent', 'stroke-width': 20, class: 'te-linkhit' }, g);
+        let lab = null;
+        const lp = z.lpos || 'margin';
+        if (z.label && lp !== 'none') {
+          lab = S('g', null, g);
+          const t = S('text', { class: lp === 'margin' ? 'te-digit' : 'te-note', 'text-anchor': lp === 'margin' && !geo.horiz ? 'end' : 'middle', dy: '.35em', fill: lp === 'margin' ? null : nc, 'font-size': lp === 'margin' ? null : (+z.size || 22) }, lab);
+          t.textContent = z.label;
+        }
+        this.dyn.push(() => {
+          let pts = (z.ids || []).map(id => this.cur[id]).filter(Boolean);
+          if (z.order !== 'given') pts = pts.slice().sort((a, b) => a[0] - b[0]);
+          if (!pts.length) { g.setAttribute('visibility', 'hidden'); return; }
+          g.removeAttribute('visibility');
+          const S2 = pts.map(p => geo.pt(p[0], p[1]));
+          const ptsAttr = S2.map(s => s[0].toFixed(1) + ',' + s[1].toFixed(1)).join(' ');
+          pl.setAttribute('points', ptsAttr);
+          if (this.editor) g.querySelector('.te-linkhit').setAttribute('points', ptsAttr);
+          if (lab) {
+            const ax = S2.reduce((s, p) => s + p[0], 0) / S2.length, ay = S2.reduce((s, p) => s + p[1], 0) / S2.length;
+            const vb = geo.vb;
+            if (lp === 'margin') lab.setAttribute('transform', geo.horiz ? `translate(${ax.toFixed(1)},${(vb[1] + vb[3] - 9).toFixed(1)})` : `translate(${(vb[0] + vb[2] - 3).toFixed(1)},${ay.toFixed(1)})`);
+            else lab.setAttribute('transform', `translate(${ax.toFixed(1)},${(ay + (lp === 'above' ? -38 : 38)).toFixed(1)})`);
+          }
+        });
+      } else if (z.type === 'poly') {
+        const pg = S('polygon', Object.assign({ fill: col, 'fill-opacity': z.fill != null && z.fill !== '' ? fo : 0.14, 'stroke-linejoin': 'round' }, z.stroke === 'none' ? { stroke: 'none' } : { stroke: col, 'stroke-opacity': 0.75, 'stroke-width': 2, 'stroke-dasharray': z.stroke === 'dashed' ? '7 6' : null }), g);
+        this.dyn.push(() => {
+          const pts = (z.ids || []).map(id => this.cur[id]).filter(Boolean);
+          pg.setAttribute('points', pts.map(p => geo.pt(p[0], p[1]).map(v => v.toFixed(1)).join(',')).join(' '));
+        });
+      } else if (z.type === 'ring') {
+        const rr = +z.r || 30;
+        const c = S('circle', Object.assign({ r: rr, fill: col, 'fill-opacity': z.fill != null && z.fill !== '' ? fo : 0.14 }, z.stroke === 'none' ? { stroke: 'none' } : { stroke: col, 'stroke-width': 2.2, 'stroke-dasharray': z.stroke === 'solid' ? null : '6 5' }), g);
+        const lab = z.label ? S('g', null, g) : null;
+        if (lab) { const t = S('text', { class: 'te-note', 'text-anchor': 'middle', dy: '.32em', fill: nc, 'font-size': +z.size || 22 }, lab); t.textContent = z.label; }
+        this.dyn.push(() => {
+          const p = typeof z.target === 'string' ? this.cur[z.target] : null;
+          if (!p) { g.setAttribute('visibility', 'hidden'); return; }
+          g.removeAttribute('visibility');
+          const s = geo.pt(p[0], p[1]);
+          c.setAttribute('cx', s[0].toFixed(1)); c.setAttribute('cy', s[1].toFixed(1));
+          if (lab) lab.setAttribute('transform', `translate(${s[0].toFixed(1)},${(z.lpos === 'above' ? s[1] - rr - 15 : s[1] + rr + 16).toFixed(1)})`);
+        });
+      }
+    });
+  }
+
+  drawBubbles(f) {
+    this.gB.textContent = '';
+    (f.bubbles || []).forEach((b, idx) => {
+      const text = String(b.text || '');
+      if (!text) return;
+      const g = S('g', { 'data-bidx': this.editor ? idx : null }, this.gB);
+      const inner = S('g', { class: 'te-bub' }, g);
+      const fill = safeColor(b.color || this.st.colors.special, '#ff8a1a'), tcol = safeColor(b.textColor || '#1f2a44');
+      const w = Math.max(52, text.length * 11 + 22), hh = 30, dn = !!b.below;
+      if (dn) inner.style.transformOrigin = '50% 0%';
+      S('rect', { x: -w / 2, y: dn ? 7 : -hh - 7, width: w, height: hh, rx: 10, fill, stroke: 'rgba(8,40,20,.35)', 'stroke-width': 1 }, inner);
+      S('path', { d: dn ? 'M-7,8 L0,0 L7,8 z' : 'M-7,-8 L0,0 L7,-8 z', fill }, inner);
+      const t = S('text', { class: 'te-bubtxt', 'text-anchor': 'middle', y: dn ? 7 + hh / 2 : -7 - hh / 2, dy: '.34em', fill: tcol }, inner);
+      t.textContent = text;
+      this.dyn.push(() => {
+        const p = this.cur[b.target];
+        if (!p) { g.setAttribute('visibility', 'hidden'); return; }
+        g.removeAttribute('visibility');
+        const s = this.geo.pt(p[0], p[1]), r = this.radius(b.target);
+        g.setAttribute('transform', `translate(${s[0].toFixed(1)},${(s[1] + (dn ? r + 3 : -r - 3)).toFixed(1)})`);
+      });
+    });
+  }
+
+  updateDyn() { for (let k = 0; k < this.dyn.length; k++) this.dyn[k](); }
+
+  _snap(i) {
+    const st = this.resolve(i);
+    const prevP = (i > 0 && !this.isChapterStart(i)) ? this.resolve(i - 1).P : st.P;
+    this.i = i;
+    this.cur = {};
+    for (const id in st.P) this.cur[id] = st.P[id].slice();
+    this.applyClasses(st);
+    this.place();
+    this.ballOwner = st.ball && st.ball.owner ? st.ball.owner : null;
+    this.setBall(st.ball, null, true, 1);
+    const from = {};
+    for (const id in this.cur) from[id] = prevP[id] || this.cur[id];
+    this.drawArrows(st.f, from, this.cur, st, false);
+    this.drawZones(st.f);
+    this.drawBubbles(st.f);
+    this.updateDyn();
+    this.ui(i);
+    if (this.opts.onRender) this.opts.onRender(this);
+  }
+
+  async tweenTo(i) {
+    const st = this.resolve(i);
+    const from = {};
+    for (const id in st.P) from[id] = this.cur[id] ? this.cur[id].slice() : st.P[id].slice();
+    const fromBall = this.ballXY ? this.ballXY.slice() : null;
+    const same = !!(st.ball && st.ball.owner && st.ball.owner === this.ballOwner);
+    this.i = i;
+    this.applyClasses(st);
+    this.drawArrows(st.f, from, st.P, st, true);
+    this.drawZones(st.f);
+    this.drawBubbles(st.f);
+    this.ui(i);
+    const dur = REDUCED ? 1 : (st.f.dur || 1100) / this.speed;
+    const delay = REDUCED ? 0 : ((st.f.arrows && st.f.arrows.length) ? 320 / this.speed : 0);
+    const ok = await this.animate(dur + delay, t => {
+      const k = ease(clamp01((t - delay) / dur));
+      const next = {};
+      for (const id in from) {
+        const a = from[id], b = st.P[id];
+        next[id] = [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k];
+      }
+      this.cur = next;
+      this.place();
+      this.setBall(st.ball, fromBall, same, k);
+      this.updateDyn();
+    });
+    if (ok) this.ballOwner = st.ball && st.ball.owner ? st.ball.owner : null;
+    return ok;
+  }
+
+  animate(total, fn) {
+    const gen = this.gen;
+    return new Promise(res => {
+      const t0 = performance.now();
+      const step = now => {
+        if (gen !== this.gen) return res(false);
+        const el = now - t0;
+        fn(Math.min(el, total));
+        if (el < total) requestAnimationFrame(step); else res(true);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  wait(ms) {
+    const gen = this.gen;
+    return new Promise(res => { this.tm = setTimeout(() => res(gen === this.gen), ms); });
+  }
+
+  cancel() { this.gen++; clearTimeout(this.tm); this.setPlaying(false); }
+
+  rangeOf(i) {
+    if (!this.chapters) return [0, this.n - 1];
+    const c = this.chapters.find(ch => i >= ch.from && i <= ch.to) || this.chapters[0];
+    return [c.from, c.to];
+  }
+
+  async play(startHold) {
+    this.cancel();
+    const gen = this.gen;
+    this.setPlaying(true);
+    const [a, b] = this.rangeOf(this.i);
+    if (this.i >= b && !this.B.loop) { this._snap(a); if (!(await this.wait(800))) return; }
+    if (startHold && !(await this.wait(startHold))) return;
+    while (gen === this.gen) {
+      let nx = this.i + 1;
+      if (this.i >= b) { if (this.B.loop) nx = a; else break; }
+      if (!(await this.tweenTo(nx))) return;
+      if (!this.B.loop && nx >= b) break;
+      if (!(await this.wait((this.F[nx].hold || 2000) / this.speed))) return;
+    }
+    if (gen === this.gen) this.setPlaying(false);
+  }
+
+  async playRange(a, b, onDone) {
+    this.cancel();
+    const gen = this.gen;
+    this.playing = true;
+    this._snap(a);
+    if (!(await this.wait(450))) return;
+    for (let i = a + 1; i <= b; i++) {
+      if (this.isChapterStart(i)) { if (!(await this.wait(400))) return; this._snap(i); }
+      else if (!(await this.tweenTo(i))) return;
+      if (i < b && !(await this.wait((this.F[i].hold || 2000) / this.speed))) return;
+    }
+    if (!(await this.wait(700))) return;
+    if (gen === this.gen) { this.playing = false; if (onDone) onDone(); }
+  }
+
+  async step(d) {
+    this.cancel();
+    if (d > 0) {
+      if (this.i >= this.n - 1) return;
+      const nx = this.i + 1;
+      if (this.isChapterStart(nx)) this._snap(nx); else await this.tweenTo(nx);
+    } else {
+      const pv = this.i - 1;
+      if (pv < 0) return;
+      if (pv === 0 || this.isChapterStart(pv)) this._snap(pv);
+      else { this._snap(pv - 1); await this.tweenTo(pv); }
+    }
+  }
+
+  buildUI(host) {
+    const ui = H('div', 'te-sui-in', host);
+    if (this.chapters) {
+      const ch = H('div', 'te-chapters', ui);
+      this.chipEls = this.chapters.map(c => {
+        const b = H('button', 'te-chapter', ch);
+        b.type = 'button';
+        b.textContent = c.name;
+        b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', () => { this.cancel(); this._snap(c.from); this.play(900); });
+        return b;
+      });
+    }
+    if (this.F.some(f => f.cap)) {
+      const box = H('div', 'te-note-box', ui);
+      box.setAttribute('aria-live', 'polite');
+      this.stepEl = H('span', 'te-step', box);
+      this.capEl = H('span', 'te-cap', box);
+    }
+    const ctrl = H('div', 'te-ctrl', ui);
+    const mk = (cls, label, icon, fn) => {
+      const b = H('button', cls, ctrl, icon);
+      b.type = 'button';
+      b.setAttribute('aria-label', label);
+      b.title = label;
+      b.addEventListener('click', fn);
+      return b;
+    };
+    mk('', 'Показать сначала', ICON.restart, () => { this.cancel(); this._snap(this.rangeOf(this.i)[0]); this.play(700); });
+    mk('', 'Шаг назад', ICON.back, () => this.step(-1));
+    this.playBtn = mk('te-play', 'Воспроизвести', ICON.play, () => { if (this.playing) { this.cancel(); this._snap(this.i); } else this.play(); });
+    mk('', 'Шаг вперёд', ICON.fwd, () => this.step(1));
+    this.ticks = H('div', 'te-ticks', ctrl);
+    this.ticks.setAttribute('aria-hidden', 'true');
+  }
+
+  ui(i) {
+    if (!this.ticks) return;
+    const [a, b] = this.rangeOf(i);
+    if (this.capEl) {
+      this.stepEl.textContent = `${i - a + 1}/${b - a + 1}`;
+      this.capEl.innerHTML = inline(this.F[i].cap || '');
+    }
+    this.ticks.textContent = '';
+    for (let k = a; k <= b; k++) H('i', k <= i ? 'done' : '', this.ticks);
+    if (this.chipEls) {
+      const cur = this.chapters.findIndex(c => i >= c.from && i <= c.to);
+      this.chipEls.forEach((el, k) => el.setAttribute('aria-pressed', String(k === cur)));
+    }
+  }
+
+  setPlaying(p) {
+    this.playing = p;
+    if (!this.playBtn) return;
+    this.playBtn.innerHTML = p ? ICON.pause : ICON.play;
+    this.playBtn.setAttribute('aria-label', p ? 'Пауза' : 'Воспроизвести');
+    this.playBtn.title = p ? 'Пауза' : 'Воспроизвести';
+  }
+
+  enter() {
+    this.cancel();
+    this._snap(0);
+    if (this.B.autoplay && this.st.anim.autoplay !== false && this.n > 1 && !this.B.still) this.play(1100);
+  }
+  leave() { this.cancel(); }
+}
+
+/* ---------- Режим показа ---------- */
+function mountPresentation(rootEl, project, opts) {
+  opts = opts || {};
+  const P = normalizeProject(clone(project));
+  const st = P.settings;
+  rootEl.textContent = '';
+  const theme = ['board', 'night', 'paper'].indexOf(st.look.theme) >= 0 ? st.look.theme : 'board';
+  const font = ['sport', 'bold', 'clean'].indexOf(st.look.font) >= 0 ? st.look.font : 'sport';
+  const app = H('div', `te-app te-theme-${theme} te-font-${font}`, rootEl);
+  const acc = safeColor(st.look.accent, '#ff7a00');
+  app.style.setProperty('--te-accent', acc);
+  app.style.setProperty('--te-accent-text', theme === 'night' ? acc : mix(acc, '#000000', 0.22));
+
+  const top = H('header', 'te-top', app);
+  const logo = H('div', 'te-logo', top, '<i></i><span></span>');
+  logo.querySelector('span').textContent = plain(P.title);
+  H('div', 'te-grow', top);
+  const pager = H('span', 'te-pager', top);
+  const tocBtn = H('button', 'te-btn', top, 'Слайды');
+  tocBtn.type = 'button';
+  const de = document.documentElement;
+  const canFs = !opts.onClose && !!(de.requestFullscreen || de.webkitRequestFullscreen);
+  let fsBtn = null;
+  if (canFs) { fsBtn = H('button', 'te-btn', top, ICON.fs); fsBtn.type = 'button'; fsBtn.setAttribute('aria-label', 'Во весь экран'); }
+  if (opts.onClose) {
+    const cb = H('button', 'te-btn', top, 'Закрыть');
+    cb.type = 'button';
+    cb.addEventListener('click', () => opts.onClose());
+  }
+
+  const stage = H('main', 'te-stage', app);
+  const nav = H('nav', 'te-nav', app);
+  nav.setAttribute('aria-label', 'Навигация по слайдам');
+  const prevBtn = H('button', 'te-navbtn', nav, ICON.back);
+  prevBtn.type = 'button'; prevBtn.setAttribute('aria-label', 'Предыдущий слайд');
+  const prog = H('div', 'te-prog', nav, '<div class="te-track"><i></i></div><span class="te-where"></span>');
+  const nextBtn = H('button', 'te-navbtn te-primary', nav, '<span>Дальше</span>' + ICON.fwd);
+  nextBtn.type = 'button'; nextBtn.setAttribute('aria-label', 'Следующий слайд');
+  const fill = prog.querySelector('i'), where = prog.querySelector('.te-where');
+
+  const toc = H('div', 'te-toc', app);
+  toc.hidden = true;
+  const panel = H('div', 'te-toc-panel', toc);
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-label', 'Список слайдов');
+  const th = H('div', 'te-toc-head', panel, '<span>Слайды</span>');
+  const tcl = H('button', 'te-btn', th, 'Закрыть');
+  tcl.type = 'button';
+  const tlist = H('ol', null, panel);
+
+  const boards = [];
+  const N = P.slides.length;
+  if (!N) H('div', 'te-empty', stage, 'В презентации пока нет слайдов.');
+  P.slides.forEach((s, idx) => {
+    const hasBoard = !!(s.board && s.layout !== 'text');
+    const sec = H('section', 'te-slide ' + (hasBoard ? 'te-has-board' : 'te-text') + (s.layout === 'title' ? ' te-title-slide' : ''), stage);
+    const label = plain(s.nav || s.title) || `Слайд ${idx + 1}`;
+    sec.setAttribute('aria-label', `${idx + 1}. ${label}`);
+    const inner = H('div', 'te-inner', sec);
+    const headHTML = (s.title ? (s.layout === 'title' ? `<h1>${inline(s.title)}</h1>` : `<h2>${inline(s.title)}</h2>`) : '') +
+      (s.subtitle ? `<p class="${s.layout === 'title' ? 'te-sub' : 'te-lead'}">${inline(s.subtitle)}</p>` : '');
+    const bodyHTML = md(s.body);
+    if (hasBoard) {
+      const split = H('div', 'te-split' + (s.side === 'right' ? ' te-right' : '') + (s.layout === 'board' ? ' te-focus' : ''), inner);
+      if (headHTML) H('div', 'te-head', split, headHTML);
+      const vis = H('div', 'te-vis', split);
+      const sui = H('div', 'te-sui', split);
+      if (bodyHTML) H('div', 'te-body te-md', split, bodyHTML);
+      boards[idx] = new Board(vis, s.board, P, { uiHost: sui });
+      if (!sui.childNodes.length) sui.remove();
+    } else {
+      if (headHTML) H('div', 'te-head', inner, headHTML);
+      if (bodyHTML) H('div', 'te-body te-md', inner, bodyHTML);
+    }
+    const li = H('li', null, tlist);
+    const b = H('button', null, li);
+    b.type = 'button';
+    H('span', null, b).textContent = String(idx + 1);
+    H('span', null, b).textContent = label;
+    b.addEventListener('click', () => { closeToc(false); go(idx); });
+  });
+
+  let cur = -1;
+  function go(n) {
+    if (!N) return;
+    n = Math.max(0, Math.min(N - 1, n));
+    if (n === cur) return;
+    const secs = stage.querySelectorAll('.te-slide');
+    if (cur >= 0) { secs[cur].classList.remove('on'); if (boards[cur]) boards[cur].leave(); }
+    cur = n;
+    const sec = secs[n];
+    sec.classList.add('on');
+    sec.scrollTop = 0;
+    const body = sec.querySelector('.te-body');
+    if (body) body.scrollTop = 0;
+    if (boards[n]) boards[n].enter();
+    pager.textContent = `${n + 1} / ${N}`;
+    fill.style.width = ((n + 1) / N * 100) + '%';
+    where.textContent = plain(P.slides[n].nav || P.slides[n].title) || `Слайд ${n + 1}`;
+    prevBtn.disabled = n === 0;
+    nextBtn.disabled = n === N - 1;
+    tlist.querySelectorAll('button').forEach((el, k) => el.setAttribute('aria-current', String(k === n)));
+    if (opts.useHash) { try { history.replaceState(null, '', '#' + (n + 1)); } catch (e) { /* sandbox */ } }
+  }
+  function openToc() { toc.hidden = false; const c = tlist.querySelector('[aria-current="true"]') || tlist.querySelector('button'); if (c) c.focus(); }
+  function closeToc(refocus) { toc.hidden = true; if (refocus !== false) tocBtn.focus(); }
+  function toggleFs() {
+    try {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) (de.requestFullscreen || de.webkitRequestFullscreen).call(de);
+      else (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } catch (e) { /* not allowed */ }
+  }
+  prevBtn.addEventListener('click', () => go(cur - 1));
+  nextBtn.addEventListener('click', () => go(cur + 1));
+  tocBtn.addEventListener('click', openToc);
+  tcl.addEventListener('click', () => closeToc());
+  toc.addEventListener('click', e => { if (e.target === toc) closeToc(); });
+  if (fsBtn) fsBtn.addEventListener('click', toggleFs);
+
+  const onKey = e => {
+    if (!app.isConnected) return;
+    if (!toc.hidden) { if (e.key === 'Escape') closeToc(); return; }
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    const tag = e.target && e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    const onButton = tag === 'BUTTON';
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(cur + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(cur - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(N - 1); }
+    else if (e.key === 'Escape' && opts.onClose) opts.onClose();
+    else if (e.key === ' ' && !onButton) { const b = boards[cur]; if (b && b.playBtn) { e.preventDefault(); b.playBtn.click(); } }
+    else if ('fFаА'.indexOf(e.key) >= 0 && canFs) toggleFs();
+  };
+  document.addEventListener('keydown', onKey);
+
+  let sx = 0, sy = 0, stt = 0;
+  stage.addEventListener('touchstart', e => { const t = e.touches[0]; sx = t.clientX; sy = t.clientY; stt = Date.now(); }, { passive: true });
+  stage.addEventListener('touchend', e => {
+    const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.6 && Date.now() - stt < 700) go(cur + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  let start = opts.start || 0;
+  const hashSlide = () => { const hn = parseInt((location.hash || '').replace('#', ''), 10); return hn >= 1 && hn <= N ? hn - 1 : -1; };
+  const onHash = () => { const k = hashSlide(); if (k >= 0) go(k); };
+  if (opts.useHash) { const k = hashSlide(); if (k >= 0) start = k; window.addEventListener('hashchange', onHash); }
+  go(start);
+  return {
+    go,
+    destroy() { boards.forEach(b => b && b.leave()); document.removeEventListener('keydown', onKey); window.removeEventListener('hashchange', onHash); rootEl.textContent = ''; }
+  };
+}
+
+root.TE = {
+  version: 1, FORMATS, S, H, esc, uid, clone, mix, rgb, safeColor, isWhite, plain, inline, md,
+  defaultSettings, normalizeProject, normalizeBoard, newFrame, computeChapters, makeGeo,
+  isPlayer, entColors, entLabel, entRadius, EQUIP_COLOR, Board, mountPresentation
+};
+})(window);
+</script>
+<script>TE.mountPresentation(document.getElementById("te-root"), JSON.parse(document.getElementById("te-data").textContent), { useHash: true });</script>
+</body>
+</html>

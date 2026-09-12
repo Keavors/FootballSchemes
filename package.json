@@ -1,0 +1,15 @@
+{
+  "name": "ustanovka",
+  "version": "1.0.0",
+  "private": true,
+  "description": "«Установка» — тактические презентации для футбольной команды",
+  "scripts": {
+    "build": "node build.js",
+    "check": "node build.js --check",
+    "test": "node tests/run-all.js"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "^6.2.5",
+    "jsdom": "^30.0.1"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "shell": "index.html",
+  "css": {
+    "engine": "styles/engine.css",
+    "app": "styles/app.css"
+  },
+  "engine": {
+    "prologue": "\n(function (root) {\n'use strict';\n",
+    "epilogue": "\n})(window);\n",
+    "files": [
+      "engine/00-utils.js",
+      "engine/05-timing.js",
+      "engine/10-formats.js",
+      "engine/15-model.js",
+      "engine/20-markup.js",
+      "engine/25-geometry.js",
+      "engine/30-entities.js",
+      "engine/40-board.js",
+      "engine/50-presentation.js",
+      "engine/90-exports.js"
+    ]
+  },
+  "app": {
+    "prologue": "\n(function () {\n'use strict';\n",
+    "epilogue": "\n})();\n",
+    "files": [
+      "app/00-dom.js",
+      "app/05-storage.js",
+      "app/10-state.js",
+      "app/15-formations.js",
+      "app/17-templates.js",
+      "app/20-sample.js",
+      "app/25-history.js",
+      "app/30-home.js",
+      "app/35-editor-shell.js",
+      "app/40-tools.js",
+      "app/45-timeline.js",
+      "app/50-chapters.js",
+      "app/55-playback.js",
+      "app/60-canvas.js",
+      "app/65-overlay.js",
+      "app/70-pointer-down.js",
+      "app/75-clipboard.js",
+      "app/80-pointer-up.js",
+      "app/85-forms.js",
+      "app/90-inspector.js",
+      "app/95-objects.js",
+      "app/100-text-layout.js",
+      "app/105-dialogs.js",
+      "app/106-custom.js",
+      "app/110-export.js",
+      "app/112-video.js",
+      "app/113-backup.js",
+      "app/114-versions.js",
+      "app/115-keys.js",
+      "app/120-site.js",
+      "app/125-reliability.js",
+      "app/130-boot.js"
+    ]
+  }
+}

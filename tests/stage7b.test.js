@@ -1,0 +1,110 @@
+// Этап 7б: история версий и главный экран — картинки, поиск, порядок.
+const { openApp, suite } = require('./harness');
+
+(async () => {
+  const t = suite('Этап 7б — история версий и главный экран');
+  const e = await openApp({ idb: true });
+  const TE = e.TE, UST = e.UST;
+
+  t.section('копия откладывается сама');
+  await e.press('Открыть пример «Маятник»');
+  await e.wait(60);
+  const id = e.App.project.id;
+  e.UST.commit(p => { p.title = 'Разбор с «Ракетой»'; }, { parts: [] });
+  await e.wait(1500);
+  let hist = await UST.loadHistory(id);
+  t.ok('первая копия отложилась при сохранении', hist.length === 1, hist.length);
+  t.ok('в копии видно название и число слайдов', hist[0].title === 'Маятник' && hist[0].slides > 0, JSON.stringify({ t: hist[0].title, s: hist[0].slides }));
+  e.UST.commit(p => { p.title = 'Разбор второй'; }, { parts: [] });
+  await e.wait(1500);
+  hist = await UST.loadHistory(id);
+  t.ok('часто копии не плодятся', hist.length === 1, hist.length);
+  const added = await UST.noteVersion(e.App.project, true);
+  hist = await UST.loadHistory(id);
+  t.ok('но по просьбе копия откладывается', added === true && hist.length === 2, hist.length);
+  t.ok('одинаковую версию второй раз не пишем', (await UST.noteVersion(e.App.project, true)) === false);
+  t.ok('новые копии идут первыми', hist[0].title === 'Разбор второй' && hist[1].title === 'Маятник' && hist[0].t >= hist[1].t, hist.map(x => x.title).join(' | '));
+
+  t.section('возврат к старой версии');
+  await UST.restoreVersion(id, hist[1].t, null);
+  await e.wait(60);
+  const back = await UST.loadProject(id);
+  t.ok('вернулось старое название', back.title === 'Маятник', back.title);
+  const hist2 = await UST.loadHistory(id);
+  t.ok('нынешняя версия осталась в истории — откат можно отменить', hist2.length >= 2 && hist2[0].title === 'Разбор второй', hist2.map(x => x.title).join(' | '));
+  t.ok('сама презентация тоже переписана', (await UST.loadProject(id)).title === 'Маятник');
+  t.ok('значит, откат можно откатить', hist2.some(x => x.title === 'Разбор второй'));
+
+  t.section('окно истории');
+  UST.openHistory(id, null);
+  await e.wait(60);
+  const dlg = () => e.$$('.modal-ov').pop();
+  t.ok('окно открылось', /История версий/.test(e.text(dlg())));
+  t.ok('видны все копии', e.$$('.mine-row', dlg()).length === hist2.length, e.$$('.mine-row', dlg()).length + ' из ' + hist2.length);
+  t.ok('у копии есть дата и размер', /\d+ (слайд|слайда|слайдов) · \d+ (КБ|МБ)/.test(e.text(e.$('.mine-row', dlg()))), e.text(e.$('.mine-row', dlg())));
+  await e.press('Отложить копию сейчас', dlg());
+  await e.wait(60);
+  t.ok('кнопка «отложить» работает', /уже есть в истории|Копия отложена/.test(e.text(e.$('.toast')) || ''), e.text(e.$('.toast')));
+  const cl = e.button('Закрыть', dlg());
+  if (cl) e.click(cl);
+  await e.wait(20);
+
+  t.section('картинка презентации');
+  const mixed = TE.normalizeProject({ title: 'Смесь', settings: { format: '8x8' }, slides: [{ id: 's', layout: 'split', title: 'Схема', board: { entities: [{ id: 'a', kind: 'ours' }, { id: 'b', kind: 'opp' }, { id: 'c', kind: 'third' }], frames: [{ pos: { a: [20, 80], b: [50, 30], c: [70, 50] } }] } }] });
+  const thMix = UST.thumbOf(mixed);
+  t.ok('свои, чужие и нейтральные помечены по-разному', JSON.stringify(thMix.pts.map(p => p[2])) === '[0,1,2]', JSON.stringify(thMix.pts));
+  const th = UST.thumbOf(e.App.project);
+  t.ok('слепок схемы собран', !!th && th.pts.length > 4, th && th.pts.length);
+  t.ok('в нём формат и цвета', th.r > 1 && Array.isArray(th.c) && th.c.length === 3, JSON.stringify({ r: th.r, c: th.c }));
+  t.ok('точки внутри поля', th.pts.every(p => p[0] >= 0 && p[0] <= 100 && p[1] >= 0 && p[1] <= 100));
+  const box = UST.projThumb({ thumb: th });
+  t.ok('по слепку рисуется поле', /<svg/.test(box.innerHTML) && (box.innerHTML.match(/<circle/g) || []).length === th.pts.length + 1, (box.innerHTML.match(/<circle/g) || []).length);
+  const blank = UST.projThumb({});
+  t.ok('без слепка тоже рисуется поле', /<svg/.test(blank.innerHTML) && !/circle[^>]*fill="#2456c7"/.test(blank.innerHTML));
+
+  t.section('поиск и порядок на главной');
+  const mk = async (title, when) => {
+    const p = TE.normalizeProject({ title, settings: { format: '8x8' }, slides: [{ id: 'a', layout: 'title', title }] });
+    p.id = 'x' + title.length + Math.random().toString(36).slice(2, 6);
+    p.updated = when;
+    await UST.saveProject(p);
+  };
+  await mk('Аврора', Date.now() - 90000000);
+  await mk('Буря', Date.now() - 1000);
+  await e.press('К списку презентаций');
+  await e.wait(120);
+  const titles = () => e.$$('.proj h3').map(x => e.text(x));
+  t.ok('в списке все презентации', titles().length === 3, titles().join(' | '));
+  const idxList = JSON.parse(await UST.Store.get('ustanovka-index'));
+  const newest = idxList.slice().sort((a, b) => (b.updated || 0) - (a.updated || 0))[0].title;
+  t.ok('сначала самые свежие', titles()[0] === newest, titles().join(' | ') + ' — свежая: ' + newest);
+  t.ok('у каждой карточки есть картинка', e.$$('.proj .proj-thumb svg').length === 3, e.$$('.proj .proj-thumb svg').length);
+  t.ok('и кнопка истории', !!e.button('История', e.$('.proj')));
+  const sortBtn = e.$$('.home-tools .seg button').find(b => e.text(b) === 'По названию');
+  t.ok('есть переключатель порядка', !!sortBtn);
+  e.click(sortBtn);
+  await e.wait(30);
+  t.ok('по названию сортируется по-русски', titles()[0] === 'Аврора' && titles()[1] === 'Буря', titles().join(' | '));
+  const search = e.$('.home-tools input');
+  e.input(search, 'бур');
+  await e.wait(30);
+  t.ok('поиск ищет без учёта регистра', titles().length === 1 && titles()[0] === 'Буря', titles().join(' | '));
+  e.input(search, 'зззз');
+  await e.wait(30);
+  t.ok('когда ничего нет — так и говорим', titles().length === 0 && /Ничего не нашлось/.test(e.text(e.$('section.home-list'))), e.text(e.$('section.home-list')).slice(-40));
+  e.input(search, '');
+  await e.wait(30);
+  t.ok('пустой поиск возвращает всех', titles().length === 3, titles().length);
+
+  t.section('удаление убирает и историю');
+  const card = e.$$('.proj').find(c => /Разбор/.test(e.text(c)));
+  e.click(e.button('Удалить', card));
+  await e.wait(30);
+  await e.press('Удалить', e.$$('.modal-ov').pop());
+  await e.wait(120);
+  t.ok('презентация удалена', !e.$$('.proj h3').some(x => /Разбор/.test(e.text(x))), titles().join(' | '));
+  t.ok('и её история тоже', (await UST.loadHistory(id)).length === 0);
+  t.clean(e, 'этап 7б без ошибок');
+  e.close();
+  process.exit(t.done() ? 1 : 0);
+})().catch(err => { console.log('ТЕСТ УПАЛ:', err && err.stack || err); process.exit(2); });

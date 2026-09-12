@@ -1,0 +1,6 @@
+node_modules/
+# результат сборки — собирается командой npm run build
+dist/
+# старые сборки и снимок до разбиения на модули
+ustanovka-site/
+ustanovka.html

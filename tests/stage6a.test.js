@@ -1,0 +1,92 @@
+// Этап 6а: свои форматы поля и размеры в метрах.
+const { openApp, suite } = require('./harness');
+
+(async () => {
+  const t = suite('Этап 6а — свой формат поля');
+  const e = await openApp({ idb: true });
+  const TE = e.TE, UST = e.UST;
+
+  t.section('проверка своего формата');
+  const raw = { id: 'zal', name: 'Наш зал в школе — очень длинное имя которое надо подрезать', n: 42, ratio: 9, m: [3, 400], box: [5, 0], spot: -1, ga: [0.3, 0.04], round: true, arc: false };
+  const f = TE.normFormat(raw);
+  t.ok('имя подрезано', f.name.length <= 24, f.name);
+  t.ok('игроков в разумных пределах', f.n === 11, f.n);
+  t.ok('размеры в разумных пределах', f.m[0] === 15 && f.m[1] === 90, f.m.join('×'));
+  t.ok('пропорции в разумных пределах', f.ratio === 2.6, f.ratio);
+  t.ok('штрафная не вылезает за поле', f.box[0] <= 0.98 && f.box[1] >= 0.05, f.box.join(' / '));
+  t.ok('вратарская сохранилась', !!f.ga && Math.abs(f.ga[0] - 0.3) < 0.001, JSON.stringify(f.ga));
+  t.ok('скруглённая штрафная запомнилась', f.round === true && f.arc === false);
+  t.ok('свой формат помечен как свой', f.custom === true);
+  t.ok('без вратарской тоже можно', TE.normFormat({ ga: null }).ga === null);
+
+  t.section('поле строится по своему формату');
+  const my = TE.normFormat({ id: 'zal', name: 'Зал', n: 6, ratio: 1.25, m: [42, 24], box: [0.7, 0.12], ga: null, round: true, arc: false, goal: 0.3 });
+  const P = TE.normalizeProject({ title: 'Зал', settings: { format: 'zal', formats: [my] }, slides: [] });
+  t.ok('формат не сбросился на 8×8', P.settings.format === 'zal', P.settings.format);
+  t.ok('формат лежит внутри презентации', P.settings.formats.length === 1 && P.settings.formats[0].id === 'zal');
+  t.ok('движок находит свой формат', TE.formatOf(P.settings).name === 'Зал');
+  t.ok('размеры в метрах — свои', TE.pitchMeters(P.settings).join('×') === '42×24', TE.pitchMeters(P.settings).join('×'));
+  const geo = TE.makeGeo(P.settings);
+  t.ok('поле вытянуто по своим пропорциям', Math.abs(geo.PL / geo.PW - 1.25) < 0.01, (geo.PL / geo.PW).toFixed(3));
+  const host = e.doc.createElement('div');
+  e.doc.body.appendChild(host);
+  const bd = new TE.Board(host, TE.normalizeBoard({ entities: [], frames: [{ pos: {} }] }), P, { bare: true, frame: 0 });
+  const vb = bd.svg.getAttribute('viewBox').split(' ').map(Number);
+  t.ok('схема нарисована в таких же пропорциях', Math.abs((vb[3] - 40) / (vb[2] - 40) - 1.25) < 0.02, (vb[3] / vb[2]).toFixed(3));
+  t.ok('штрафная скруглённая — рисуется дугой', !!bd.svg.querySelector('path[d*="Q"]'));
+  const P2 = TE.normalizeProject({ settings: { format: 'нет-такого' }, slides: [] });
+  t.ok('неизвестный формат откатывается на 8×8', P2.settings.format === '8x8', P2.settings.format);
+
+  t.section('расстановки для своего формата');
+  await e.press('Открыть пример «Маятник»');
+  await e.wait(50);
+  e.App.project.settings.formats = [my];
+  t.ok('для формата на 6 игроков берём расстановки 6×6', JSON.stringify(UST.formationsFor('zal')) === JSON.stringify(['2-2-1', '1-2-2', '2-1-2', '1-3-1', '3-1-1']), JSON.stringify(UST.formationsFor('zal')).slice(0, 40));
+  t.ok('свой формат виден в списке форматов', UST.formatChoices().some(x => x[0] === 'zal' && x[1] === 'Зал'));
+  t.ok('расстановка по умолчанию — из шести', UST.defaultFormationFor('zal') === '2-2-1', UST.defaultFormationFor('zal'));
+
+  t.section('окно «свой формат»');
+  await e.press('Настройки');
+  await e.wait(30);
+  const dlg = () => e.$$('.modal-ov').pop();
+  t.ok('в настройках поля есть кнопка нового формата', !!e.button('Новый формат', dlg()));
+  await e.press('Новый формат', dlg());
+  await e.wait(60);
+  const box = dlg();
+  t.ok('окно формата открылось', /Новый формат поля/.test(e.text(box)));
+  t.ok('видно предпросмотр поля', !!e.$('.fmt-prev svg', box));
+  t.ok('и сколько это в метрах', /Поле \d+×\d+ м/.test(e.text(box)), e.text(box).match(/Поле[^.]+\./) ? e.text(box).match(/Поле[^.]+\./)[0] : '');
+  const nameIn = e.$('input.inp', box);
+  e.input(nameIn, 'Коробка у дома');
+  const ranges = e.$$('input[type=range]', box);
+  e.input(ranges[1], '40');
+  e.input(ranges[2], '20');
+  await e.wait(80);
+  t.ok('метры пересчитались', /Поле 40×20 м/.test(e.text(box)), e.text(box).match(/Поле[^.]+\./)[0]);
+  t.ok('пропорции посчитались сами', /1 : 2,?\.?00|1 : 2.00/.test(e.text(box)), e.text(box).match(/пропорции[^.]+\./) ? e.text(box).match(/пропорции[^.]+\./)[0] : '');
+  await e.press('Сохранить формат', box);
+  await e.wait(60);
+  const st = e.App.project.settings;
+  t.ok('презентация переехала на новый формат', st.format !== '8x8' && st.format !== 'zal', st.format);
+  t.ok('формат сохранён внутри презентации', (st.formats || []).some(x => x.id === st.format && x.name === 'Коробка у дома'), JSON.stringify((st.formats || []).map(x => x.name)));
+  t.ok('поле стало 40×20 м', TE.pitchMeters(st).join('×') === '40×20', TE.pitchMeters(st).join('×'));
+  t.ok('формат остался в моих на устройстве', (UST.Prefs.formats || []).some(x => x.name === 'Коробка у дома'), (UST.Prefs.formats || []).length);
+  await e.wait(220);
+  const saved = await UST.Store.get('ustanovka-prefs');
+  t.ok('мои настройки записались в хранилище', !!saved && /Коробка у дома/.test(saved), String(saved).slice(0, 60));
+
+  t.section('правка и удаление');
+  await e.press('Изменить «Коробка у дома»', dlg());
+  await e.wait(60);
+  t.ok('открылось окно правки', /Свой формат поля/.test(e.text(dlg())));
+  await e.press('Убрать из моих', dlg());
+  await e.wait(40);
+  t.ok('из моих убрался', !(UST.Prefs.formats || []).some(x => x.name === 'Коробка у дома'));
+  t.ok('а в презентации остался', (e.App.project.settings.formats || []).some(x => x.name === 'Коробка у дома'));
+  const close = e.button('Закрыть', dlg());
+  if (close) e.click(close);
+  await e.wait(20);
+  t.clean(e, 'этап 6а без ошибок');
+  e.close();
+  process.exit(t.done() ? 1 : 0);
+})().catch(err => { console.log('ТЕСТ УПАЛ:', err && err.stack || err); process.exit(2); });

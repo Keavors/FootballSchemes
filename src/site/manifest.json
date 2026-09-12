@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "Установка — тактические презентации",
+  "short_name": "Установка",
+  "description": "Схемы, анимация и тактические презентации для своей команды",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#e4eae6",
+  "theme_color": "#1f2a44",
+  "categories": ["sports", "education"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
