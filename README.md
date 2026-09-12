@@ -66,7 +66,6 @@ src/
 ```
 npm run build     собрать dist/ustanovka.html и dist/site/
 npm test          пересобрать и прогнать все тесты
-npm run check     сверить сборку с ustanovka.html (снимок до разбиения на модули)
 ```
 
 Результат сборки:
@@ -74,8 +73,14 @@ npm run check     сверить сборку с ustanovka.html (снимок д
 - `dist/ustanovka.html` — то самое приложение одним файлом: открывается с диска, работает без интернета.
 - `dist/site/` — то же самое плюс манифест, офлайн-режим и иконки для выкладывания на хостинг.
 
-Править нужно **только** файлы в `src/`. `dist/` и `ustanovka.html` в корне перезаписываются сборкой;
-`ustanovka.html` — снимок до разбиения, он нужен только для команды `npm run check` и его можно удалить.
+Править нужно **только** файлы в `src/`: `dist/` перезаписывается сборкой и в репозиторий не попадает.
+
+## Сайт
+
+Каждый пуш в `main` собирает приложение и выкладывает его на GitHub Pages (`.github/workflows/pages.yml`):
+
+- приложение: https://keavors.github.io/FootballSchemes/
+- то же одним файлом: https://keavors.github.io/FootballSchemes/ustanovka.html
 
 ## Тесты
 

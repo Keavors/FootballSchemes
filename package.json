@@ -5,7 +5,6 @@
   "description": "«Установка» — тактические презентации для футбольной команды",
   "scripts": {
     "build": "node build.js",
-    "check": "node build.js --check",
     "test": "node tests/run-all.js"
   },
   "devDependencies": {
