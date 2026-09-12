@@ -32,15 +32,25 @@ async function fontsInline() {
     const css = await (await fetch(FONT_CSS_URL)).text();
     /* Перед каждым куском Google пишет комментарий с названием набора букв */
     const rx = /(?:\/\*\s*([a-z-]+)\s*\*\/\s*)?@font-face\s*\{([^}]*)\}/gi;
+    const faces = [], seen = {};
     let m;
     while ((m = rx.exec(css))) {
       /* берём кириллицу и обычную латиницу: остальные наборы только утяжелят файл */
       const subset = (m[1] || '').toLowerCase();
       if (subset && subset !== 'cyrillic' && subset !== 'latin') continue;
       const u = m[2].match(/url\((https:[^)]+)\)/);
-      if (!u || out.length > 3e6) continue;
-      const buf = await (await fetch(u[1])).arrayBuffer();
-      out += '@font-face {' + m[2].replace(u[1], 'data:font/woff2;base64,' + bytesToBase64(buf)) + '}\n';
+      if (!u) continue;
+      /* у переменных шрифтов один файл на все толщины: качаем его один раз, толщины объединяем */
+      const w = +((m[2].match(/font-weight:\s*(\d+)/) || [])[1] || 400);
+      const key = u[1] + '|' + ((m[2].match(/font-style:\s*(\w+)/) || [])[1] || 'normal');
+      if (seen[key]) { seen[key].min = Math.min(seen[key].min, w); seen[key].max = Math.max(seen[key].max, w); continue; }
+      faces.push(seen[key] = { url: u[1], body: m[2], min: w, max: w });
+    }
+    for (let i = 0; i < faces.length && out.length < 3e6; i++) {
+      const f = faces[i];
+      const buf = await (await fetch(f.url)).arrayBuffer();
+      const weight = f.min === f.max ? String(f.min) : f.min + ' ' + f.max;
+      out += '@font-face {' + f.body.replace(f.url, 'data:font/woff2;base64,' + bytesToBase64(buf)).replace(/font-weight:\s*\d+/, 'font-weight: ' + weight) + '}\n';
     }
   } catch (e) {
     return '';

@@ -62,7 +62,7 @@ async function openApp(opts) {
     dom, win, doc, opts: o,
     get UST() { return win.UST; },
     get TE() { return win.TE; },
-    get App() { return win.UST.App; },
+    get App() { return win.UST && win.UST.App; },
     problems() {
       const out = errors.splice(0).concat(rejections.slice(env.rejFrom).map(r => 'rejection: ' + ((r && r.stack) || r)));
       env.rejFrom = rejections.length;

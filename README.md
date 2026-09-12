@@ -66,6 +66,7 @@ src/
 ```
 npm run build     собрать dist/ustanovka.html и dist/site/
 npm test          пересобрать и прогнать все тесты
+npm run sample    пересобрать презентацию «Маятник» в mayatnik-taktika-8x8.html (нужен интернет для шрифтов)
 ```
 
 Результат сборки:
@@ -81,6 +82,9 @@ npm test          пересобрать и прогнать все тесты
 
 - приложение: https://keavors.github.io/FootballSchemes/
 - то же одним файлом: https://keavors.github.io/FootballSchemes/ustanovka.html
+- презентация «Маятник»: https://keavors.github.io/FootballSchemes/mayatnik-taktika-8x8.html
+
+Пример «Маятник» живёт в `src/app/20-sample.js`. Поменяли его — выполните `npm run sample`, чтобы обновить файл презентации: тест `tests/sample.test.js` проверяет, что файл совпадает с примером.
 
 ## Тесты
 

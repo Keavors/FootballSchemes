@@ -25,8 +25,10 @@ jobs:
           node-version: 22
       - name: Сборка
         run: node build.js --version=$(date -u +%Y.%m.%d)-${{ github.run_number }}
-      - name: Файл приложения целиком — рядом с сайтом
-        run: cp dist/ustanovka.html dist/site/ustanovka.html
+      - name: Файл приложения и презентация «Маятник» — рядом с сайтом
+        run: |
+          cp dist/ustanovka.html dist/site/ustanovka.html
+          cp mayatnik-taktika-8x8.html dist/site/mayatnik-taktika-8x8.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist/site

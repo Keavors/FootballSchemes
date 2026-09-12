@@ -5,7 +5,8 @@
   "description": "«Установка» — тактические презентации для футбольной команды",
   "scripts": {
     "build": "node build.js",
-    "test": "node tests/run-all.js"
+    "test": "node tests/run-all.js",
+    "sample": "node tools/export-sample.js"
   },
   "devDependencies": {
     "fake-indexeddb": "^6.2.5",
